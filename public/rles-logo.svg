@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 220" role="img" aria-label="RLES 2V2">
+  <defs>
+    <linearGradient id="rlesFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#f4f6f8"/>
+      <stop offset="100%" stop-color="#c8ced6"/>
+    </linearGradient>
+    <linearGradient id="rlesShine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="twoFace" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b24bff"/>
+      <stop offset="55%" stop-color="#8a2be2"/>
+      <stop offset="100%" stop-color="#6a1bb8"/>
+    </linearGradient>
+    <filter id="soft" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="3" stdDeviation="2" flood-color="#001833" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(260 110) rotate(-12) translate(-260 -110)" filter="url(#soft)">
+    <!-- Outer electric blue stroke group -->
+    <g fill="none" stroke="#007BFF" stroke-width="14" stroke-linejoin="round" stroke-linecap="round">
+      <text x="36" y="118" font-family="Arial Black, Impact, Haettenschweiler, sans-serif" font-size="108" font-style="italic" font-weight="900" letter-spacing="-4">RLES</text>
+      <text x="250" y="168" font-family="Comic Sans MS, Brush Script MT, cursive" font-size="68" font-style="italic" font-weight="700" letter-spacing="-1">2V2</text>
+    </g>
+
+    <!-- Black outline -->
+    <g fill="none" stroke="#000000" stroke-width="9" stroke-linejoin="round" stroke-linecap="round">
+      <text x="36" y="118" font-family="Arial Black, Impact, Haettenschweiler, sans-serif" font-size="108" font-style="italic" font-weight="900" letter-spacing="-4">RLES</text>
+      <text x="250" y="168" font-family="Comic Sans MS, Brush Script MT, cursive" font-size="68" font-style="italic" font-weight="700" letter-spacing="-1">2V2</text>
+    </g>
+
+    <!-- Fills -->
+    <text x="36" y="118" fill="url(#rlesFace)" font-family="Arial Black, Impact, Haettenschweiler, sans-serif" font-size="108" font-style="italic" font-weight="900" letter-spacing="-4">RLES</text>
+    <text x="36" y="118" fill="url(#rlesShine)" opacity="0.55" font-family="Arial Black, Impact, Haettenschweiler, sans-serif" font-size="108" font-style="italic" font-weight="900" letter-spacing="-4" clip-path="inset(0 0 48% 0)">RLES</text>
+    <text x="250" y="168" fill="url(#twoFace)" font-family="Comic Sans MS, Brush Script MT, cursive" font-size="68" font-style="italic" font-weight="700" letter-spacing="-1">2V2</text>
+  </g>
+</svg>

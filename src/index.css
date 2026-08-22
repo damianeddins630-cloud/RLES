@@ -1,0 +1,47 @@
+:root {
+  --ink: #07111f;
+  --ink-soft: #0d1a2e;
+  --steel: #15243a;
+  --mist: #c5d0e0;
+  --paper: #f4f7fb;
+  --blue: #007bff;
+  --blue-bright: #3aa0ff;
+  --blue-deep: #0056c7;
+  --violet: #8a2be2;
+  --danger: #ff5c7a;
+  --font-display: "Teko", "Arial Narrow", sans-serif;
+  --font-body: "Sora", "Segoe UI", sans-serif;
+  color: var(--paper);
+  background: var(--ink);
+  font-family: var(--font-body);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+a {
+  color: inherit;
+}
