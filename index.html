@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RLES 2v2 — Sign in</title>
+    <meta
+      name="description"
+      content="Sign in to RLES 2v2 and jump into ranked doubles."
+    />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <div class="atmosphere" aria-hidden="true">
+      <div class="atmosphere__glow atmosphere__glow--blue"></div>
+      <div class="atmosphere__glow atmosphere__glow--violet"></div>
+      <div class="atmosphere__grid"></div>
+      <div class="atmosphere__streak"></div>
+    </div>
+
+    <main class="stage">
+      <section class="hero" aria-labelledby="brand-title">
+        <img
+          class="hero__logo"
+          src="/logo.svg"
+          width="640"
+          height="250"
+          alt="RLES 2v2"
+        />
+        <h1 id="brand-title" class="visually-hidden">RLES 2v2</h1>
+        <p class="hero__tagline">Ranked doubles. One queue. No passengers.</p>
+      </section>
+
+      <section class="login" aria-labelledby="login-heading">
+        <h2 id="login-heading" class="login__title">Sign in</h2>
+        <p class="login__hint">Use your RLES account to enter the lobby.</p>
+
+        <form class="login__form" id="login-form" novalidate>
+          <label class="field">
+            <span class="field__label">Email</span>
+            <input
+              class="field__input"
+              type="email"
+              name="email"
+              autocomplete="email"
+              required
+              placeholder="you@example.com"
+            />
+          </label>
+
+          <label class="field">
+            <span class="field__label">Password</span>
+            <input
+              class="field__input"
+              type="password"
+              name="password"
+              autocomplete="current-password"
+              required
+              minlength="6"
+              placeholder="••••••••"
+            />
+          </label>
+
+          <p class="login__status" id="login-status" role="status" aria-live="polite"></p>
+
+          <button class="btn-primary" type="submit">Enter lobby</button>
+        </form>
+
+        <p class="login__footer">
+          New here?
+          <a href="#signup" id="signup-link">Create an account</a>
+        </p>
+      </section>
+    </main>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
