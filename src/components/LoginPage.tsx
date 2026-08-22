@@ -1,17 +1,24 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { Logo } from "./Logo";
+import { DiscordButton } from "./DiscordButton";
+
+const ERROR_MESSAGES: Record<string, string> = {
+  access_denied: "Discord login was cancelled.",
+  missing_code: "Discord did not return an authorization code.",
+  auth_failed: "Discord login failed. Please try again.",
+};
 
 export function LoginPage() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    setIsLoading(true);
-    // Placeholder — connect to auth backend later
-    setTimeout(() => setIsLoading(false), 800);
-  }
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const errorCode = params.get("error");
+    if (errorCode) {
+      setError(ERROR_MESSAGES[errorCode] ?? "An error occurred during login.");
+      window.history.replaceState({}, "", "/");
+    }
+  }, []);
 
   return (
     <div className="login-page">
@@ -29,43 +36,22 @@ export function LoginPage() {
 
         <section className="login-card" aria-labelledby="login-heading">
           <h1 id="login-heading" className="login-title">Sign In</h1>
-          <p className="login-subtitle">Enter your credentials to access your account</p>
+          <p className="login-subtitle">
+            Connect your Discord account to get started
+          </p>
 
-          <form className="login-form" onSubmit={handleSubmit}>
-            <div className="field">
-              <label htmlFor="email">Email</label>
-              <input
-                id="email"
-                type="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                autoComplete="email"
-              />
+          {error && (
+            <div className="login-error" role="alert">
+              {error}
             </div>
+          )}
 
-            <div className="field">
-              <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                autoComplete="current-password"
-              />
-            </div>
-
-            <button type="submit" className="login-btn" disabled={isLoading}>
-              {isLoading ? "Signing in…" : "Sign In"}
-            </button>
-          </form>
+          <div className="login-actions">
+            <DiscordButton />
+          </div>
 
           <p className="login-footer">
-            Don&apos;t have an account?{" "}
-            <a href="#" className="login-link">Create one</a>
+            By signing in, you agree to connect your Discord profile with RLES 2V2.
           </p>
         </section>
       </main>
