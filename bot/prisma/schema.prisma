@@ -7,18 +7,21 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// Discord role ID for a league (e.g. Challenger, Premier)
+/// League Master System — one platform, many leagues (scoped by Discord guild + role)
 model League {
   id             String   @id @default(cuid())
+  discordGuildId String
   discordRoleId  String   @unique
   name           String
   teams          Team[]
   players        Player[]
   matches        Match[]
   createdAt      DateTime @default(now())
+
+  @@index([discordGuildId])
 }
 
-/// Discord role ID representing a team
+/// Discord role ID representing a team within a league
 model Team {
   id             String   @id @default(cuid())
   leagueId       String
@@ -36,7 +39,7 @@ model Team {
   @@index([leagueId])
 }
 
-/// Player linked to Discord user + league
+/// Player linked to Discord user within a specific league
 model Player {
   id              String   @id @default(cuid())
   leagueId        String

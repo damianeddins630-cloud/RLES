@@ -40,7 +40,11 @@ export const playerStatsCommand: BotCommand = {
       return;
     }
 
-    const league = await getOrCreateLeague(leagueRole.id, leagueRole.name);
+    const league = await getOrCreateLeague(
+      interaction.guildId!,
+      leagueRole.id,
+      leagueRole.name
+    );
     const { label, field } = STAT_CATEGORIES[categoryRaw];
 
     const players = await prisma.player.findMany({

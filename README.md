@@ -1,6 +1,6 @@
-# RLES 2V2
+# League Master System
 
-Competitive gaming platform with Discord OAuth login.
+Multi-league competitive gaming platform — manage Rocket League leagues, standings, and stats from one place.
 
 ## Deploy to Vercel
 
@@ -10,7 +10,7 @@ Competitive gaming platform with Discord OAuth login.
 4. Add environment variables in Vercel project settings (see below)
 5. Deploy
 
-## Discord App Setup
+## Discord App Setup (Website Login)
 
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
 2. Create a new application (or use an existing one)
@@ -68,7 +68,7 @@ npm run dev:full       # runs vercel dev on http://localhost:3000
 
 ## Discord Bot
 
-Rocket League league bot for match reporting and standings. See **[bot/README.md](bot/README.md)** for step-by-step setup.
+League Master System bot for match reporting and standings across **multiple leagues**. See **[bot/README.md](bot/README.md)** for step-by-step setup.
 
 Quick start:
 

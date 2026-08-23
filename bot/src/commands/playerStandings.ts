@@ -21,7 +21,11 @@ export const playerStandingsCommand: BotCommand = {
     await interaction.deferReply();
 
     const leagueRole = interaction.options.getRole("league", true);
-    const league = await getOrCreateLeague(leagueRole.id, leagueRole.name);
+    const league = await getOrCreateLeague(
+      interaction.guildId!,
+      leagueRole.id,
+      leagueRole.name
+    );
 
     const players = await prisma.player.findMany({
       where: { leagueId: league.id },
@@ -43,7 +47,7 @@ export const playerStandingsCommand: BotCommand = {
     const embed = buildLeaderboardEmbed(
       `${league.name} — Top 10 Players`,
       lines,
-      0xa855f7
+      0x2563eb
     );
 
     await interaction.editReply({ embeds: [embed] });

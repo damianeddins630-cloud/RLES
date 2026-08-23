@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "crypto";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 
-export const SESSION_COOKIE = "rles_session";
+export const SESSION_COOKIE = "lms_session";
 
 export interface SessionUser {
   id: string;

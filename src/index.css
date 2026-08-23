@@ -7,10 +7,10 @@
 }
 
 :root {
-  --blue: #3b82f6;
-  --blue-bright: #60a5fa;
-  --purple: #a855f7;
-  --purple-deep: #7c3aed;
+  --blue: #2563eb;
+  --blue-bright: #38bdf8;
+  --silver: #94a3b8;
+  --silver-bright: #cbd5e1;
   --bg: #0a0a0f;
   --bg-card: #12121a;
   --border: #1e1e2e;
@@ -73,10 +73,10 @@ body {
   right: -5%;
 }
 
-.login-bg-glow--purple {
+.login-bg-glow--silver {
   width: 400px;
   height: 400px;
-  background: var(--purple);
+  background: var(--silver);
   bottom: -10%;
   left: -5%;
 }
@@ -333,10 +333,10 @@ body {
   font-size: 1.15rem;
   letter-spacing: 2px;
   color: #fff;
-  background: linear-gradient(135deg, var(--blue) 0%, var(--purple-deep) 100%);
+  background: linear-gradient(135deg, var(--blue) 0%, #1d4ed8 100%);
   cursor: pointer;
   transition: transform 0.15s, box-shadow 0.2s, opacity 0.2s;
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
 }
 
 .login-btn:hover:not(:disabled) {
@@ -370,7 +370,7 @@ body {
 }
 
 .login-link:hover {
-  color: var(--purple);
+  color: var(--silver-bright);
 }
 
 /* ── Responsive ── */

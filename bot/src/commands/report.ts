@@ -17,12 +17,12 @@ function parseReplayUrls(raw: string): string[] {
 export const reportCommand: BotCommand = {
   data: new SlashCommandBuilder()
     .setName("report")
-    .setDescription("Report a Rocket League match score and submit replays")
+    .setDescription("Report a Rocket League match on League Master System")
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
     .addRoleOption((opt) =>
       opt
         .setName("league")
-        .setDescription("League role (e.g. Challenger, Premier)")
+        .setDescription("League role — each league on the platform has its own role")
         .setRequired(true)
     )
     .addRoleOption((opt) =>
@@ -73,6 +73,12 @@ export const reportCommand: BotCommand = {
   async execute(interaction: ChatInputCommandInteraction) {
     await interaction.deferReply();
 
+    const guildId = interaction.guildId;
+    if (!guildId) {
+      await interaction.editReply("This command can only be used in a server.");
+      return;
+    }
+
     const leagueRole = interaction.options.getRole("league", true);
     const homeRole = interaction.options.getRole("home_team", true);
     const awayRole = interaction.options.getRole("away_team", true);
@@ -89,7 +95,11 @@ export const reportCommand: BotCommand = {
       return;
     }
 
-    const league = await getOrCreateLeague(leagueRole.id, leagueRole.name);
+    const league = await getOrCreateLeague(
+      guildId,
+      leagueRole.id,
+      leagueRole.name
+    );
     const homeTeam = await getOrCreateTeam(league.id, homeRole.id, homeRole.name);
     const awayTeam = await getOrCreateTeam(league.id, awayRole.id, awayRole.name);
 

@@ -25,7 +25,7 @@ export function buildMatchReportEmbed(options: MatchReportEmbedOptions) {
   const embed = new EmbedBuilder()
     .setTitle(title)
     .addFields({ name: "Match Summary:", value: summary })
-    .setColor(0x5865f2);
+    .setColor(0x2563eb);
 
   const logoUrl = homeTeam.logoUrl ?? awayTeam.logoUrl;
   if (logoUrl) {

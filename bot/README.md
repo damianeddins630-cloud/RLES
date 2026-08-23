@@ -1,11 +1,12 @@
-# RLES Discord Bot
+# League Master System — Discord Bot
 
-Rocket League competitive league bot for match reporting, standings, and player stats.
+Rocket League competitive league bot for the League Master System platform. Supports **multiple leagues** per server — each league uses its own Discord role.
 
 ## Commands
 
 | Command | Description |
 | --- | --- |
+| `/leagues` | List all leagues registered on this server |
 | `/report` | Report a match — league role, home/away team roles, scores, replays, Ballchasing group |
 | `/player-standings` | Top 10 players overall in a league |
 | `/player-stats` | Top 10 players for a stat category (goals, assists, saves, etc.) |
@@ -19,13 +20,26 @@ Goals, Assists, Saves, Shots, Demos, Score, Matches Played
 
 ---
 
+## Multi-league setup
+
+League Master System is built for **many leagues on one platform**:
+
+1. Create a Discord role for each league (Challenger, Premier, Open, etc.)
+2. Create team roles for each league
+3. When you use any command with a league role, that league is auto-registered
+4. Use `/leagues` to see all leagues on your server
+
+Each server's leagues are scoped separately — the same platform can run leagues across many Discord servers.
+
+---
+
 ## Step-by-step setup
 
 ### Step 1 — Create the bot application
 
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Click **New Application** → name it (e.g. `RLES Bot`)
-3. Open **Bot** → **Reset Token** → copy the token (save it — shown once)
+2. Click **New Application** → name it `League Master System` or `LMS Bot`
+3. Open **Bot** → **Reset Token** → copy the token
 4. Enable **Message Content Intent** if you add message parsing later
 
 ### Step 2 — Get application ID
@@ -73,13 +87,11 @@ Guild commands appear instantly when `DISCORD_GUILD_ID` is set.
 npm run dev
 ```
 
-You should see: `RLES bot online as RLES Bot#1234`
+You should see: `League Master System bot online as LMS Bot#1234`
 
 ---
 
 ## Using `/report`
-
-Example (matches the RSC-style channel post):
 
 ```
 /report
@@ -89,31 +101,18 @@ Example (matches the RSC-style channel post):
   home_score: 4
   away_score: 0
   stage: Semifinals
-  replays: https://ballchasing.com/replay/abc https://ballchasing.com/replay/def
+  replays: https://ballchasing.com/replay/abc
   ballchasing_group: https://ballchasing.com/group/your-group-id
 ```
 
-The bot posts in the channel with:
-- Team role mentions
-- Embed title: `Semifinals: Warbirds vs Hydras`
-- Match summary with score
-- Team logo thumbnail (set via `/set-team`)
-- **Ballchasing Group** link button
-
-## League setup workflow
-
-1. Create Discord roles for each **league** (Challenger, Premier, etc.)
-2. Create Discord roles for each **team**
-3. `/set-team` — assign conferences and logo URLs
-4. `/register-player` — add players to a league
-5. Use `/report` for match results
+Posts team role mentions, match embed, and Ballchasing Group button.
 
 ## Database
 
-SQLite by default (`bot/dev.db`). For production, switch Prisma to PostgreSQL and set `DATABASE_URL` to your hosted database — the website can share this DB later for synced standings.
+SQLite by default (`bot/dev.db`). For production, switch Prisma to PostgreSQL — the website can share this database for synced standings across leagues.
 
-## Next steps (future)
+## Next steps
 
-- Ballchasing API integration to auto-parse replay stats into player records
-- Website API sharing the same database
-- Playoff bracket commands
+- Ballchasing API integration to auto-parse replay stats
+- Website dashboard per league on League Master System
+- Cross-server league management

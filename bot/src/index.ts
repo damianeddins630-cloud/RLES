@@ -14,7 +14,7 @@ const commandMap = new Map(
 );
 
 client.once(Events.ClientReady, (c) => {
-  console.log(`RLES bot online as ${c.user.tag}`);
+  console.log(`League Master System bot online as ${c.user.tag}`);
   console.log(`Loaded commands: ${commands.map((c) => c.data.name).join(", ")}`);
 });
 

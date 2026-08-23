@@ -45,7 +45,11 @@ export const setTeamCommand: BotCommand = {
       return;
     }
 
-    const league = await getOrCreateLeague(leagueRole.id, leagueRole.name);
+    const league = await getOrCreateLeague(
+      interaction.guildId!,
+      leagueRole.id,
+      leagueRole.name
+    );
     const team = await getOrCreateTeam(league.id, teamRole.id, teamRole.name);
 
     await prisma.team.update({

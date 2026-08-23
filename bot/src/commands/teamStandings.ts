@@ -21,7 +21,11 @@ export const teamStandingsCommand: BotCommand = {
     await interaction.deferReply();
 
     const leagueRole = interaction.options.getRole("league", true);
-    const league = await getOrCreateLeague(leagueRole.id, leagueRole.name);
+    const league = await getOrCreateLeague(
+      interaction.guildId!,
+      leagueRole.id,
+      leagueRole.name
+    );
 
     const teams = await prisma.team.findMany({
       where: { leagueId: league.id },

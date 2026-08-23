@@ -23,7 +23,11 @@ export const registerPlayerCommand: BotCommand = {
     const leagueRole = interaction.options.getRole("league", true);
     const playerUser = interaction.options.getUser("player", true);
 
-    const league = await getOrCreateLeague(leagueRole.id, leagueRole.name);
+    const league = await getOrCreateLeague(
+      interaction.guildId!,
+      leagueRole.id,
+      leagueRole.name
+    );
     const displayName = playerUser.displayName ?? playerUser.username;
 
     await prisma.player.upsert({

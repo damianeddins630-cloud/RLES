@@ -25,19 +25,19 @@ export function LoginPage() {
       <div className="login-bg">
         <div className="login-bg-grid" />
         <div className="login-bg-glow login-bg-glow--blue" />
-        <div className="login-bg-glow login-bg-glow--purple" />
+        <div className="login-bg-glow login-bg-glow--silver" />
       </div>
 
       <main className="login-container">
         <header className="login-header">
-          <Logo size={240} className="login-logo" />
-          <p className="login-tagline">Compete. Dominate. Repeat.</p>
+          <Logo size={260} className="login-logo" />
+          <p className="login-tagline">Your leagues. One platform.</p>
         </header>
 
         <section className="login-card" aria-labelledby="login-heading">
           <h1 id="login-heading" className="login-title">Sign In</h1>
           <p className="login-subtitle">
-            Connect your Discord account to get started
+            Connect with Discord to manage multiple competitive leagues
           </p>
 
           {error && (
@@ -51,7 +51,7 @@ export function LoginPage() {
           </div>
 
           <p className="login-footer">
-            By signing in, you agree to connect your Discord profile with RLES 2V2.
+            By signing in, you agree to connect your Discord profile with League Master System.
           </p>
         </section>
       </main>

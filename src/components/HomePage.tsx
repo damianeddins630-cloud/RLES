@@ -12,12 +12,12 @@ export function HomePage({ user, onLogout }: HomePageProps) {
       <div className="login-bg">
         <div className="login-bg-grid" />
         <div className="login-bg-glow login-bg-glow--blue" />
-        <div className="login-bg-glow login-bg-glow--purple" />
+        <div className="login-bg-glow login-bg-glow--silver" />
       </div>
 
       <main className="login-container home-container">
         <header className="login-header">
-          <Logo size={200} className="login-logo" />
+          <Logo size={220} className="login-logo" />
         </header>
 
         <section className="login-card home-card">
@@ -33,7 +33,7 @@ export function HomePage({ user, onLogout }: HomePageProps) {
               <h1 className="home-welcome">Welcome back</h1>
               <p className="home-name">{user.displayName}</p>
               <p className="home-discord-tag">
-                Connected via Discord
+                League Master System · Connected via Discord
               </p>
             </div>
           </div>
