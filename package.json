@@ -7,9 +7,16 @@
     "dev": "vite",
     "dev:full": "vercel dev",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "postinstall": "prisma generate",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "discord:register": "tsx scripts/register-discord-commands.ts"
   },
   "dependencies": {
+    "@prisma/client": "^6.1.0",
+    "@vercel/functions": "^2.0.0",
+    "discord-interactions": "^4.1.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
@@ -18,6 +25,9 @@
     "@types/react-dom": "^19.0.0",
     "@vercel/node": "^5.0.2",
     "@vitejs/plugin-react": "^4.3.4",
+    "dotenv": "^16.4.7",
+    "prisma": "^6.1.0",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vercel": "^41.0.2",
     "vite": "^6.0.3"

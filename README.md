@@ -2,81 +2,81 @@
 
 Multi-league competitive gaming platform — manage Rocket League leagues, standings, and stats from one place.
 
-## Deploy to Vercel
+## Deploy to Vercel (website + Discord bot)
 
-1. Push this repo to GitHub
-2. Import the project at [vercel.com/new](https://vercel.com/new)
-3. Vercel auto-detects the Vite framework — no extra build settings needed
-4. Add environment variables in Vercel project settings (see below)
-5. Deploy
+One Vercel project hosts both the website and Discord slash commands. The bot **sleeps when idle** and wakes on each command — it defers within 3 seconds (no interaction errors), then posts the full response.
 
-## Discord App Setup (Website Login)
+### 1. Deploy
 
-1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create a new application (or use an existing one)
-3. Open **OAuth2** → add this redirect URL:
+1. Push to GitHub and import at [vercel.com/new](https://vercel.com/new)
+2. Add a **Vercel Postgres** database (Storage tab) or any PostgreSQL `DATABASE_URL`
+3. Add environment variables (see below)
+4. Deploy
+
+### 2. Discord Developer Portal
+
+1. [discord.com/developers/applications](https://discord.com/developers/applications)
+2. **General Information** → copy **Application ID** and **Public Key**
+3. Set **Interactions Endpoint URL**:
    ```
-   https://your-app-name.vercel.app/api/auth/callback
+   https://your-app.vercel.app/api/discord/interactions
    ```
-4. Copy the **Client ID** and **Client Secret**
-5. Add them as Vercel environment variables
+   Discord will verify this URL on save (your app must be deployed first).
+4. **Bot** → create token → copy **Bot Token**
+5. **OAuth2 → URL Generator** → scopes `bot` + `applications.commands` → invite bot to your server
 
-## Environment Variables
+### 3. Register slash commands
 
-Set these in Vercel (Settings → Environment Variables) and in a local `.env` file for development:
+```bash
+cp .env.example .env   # fill in credentials
+npm install
+npm run discord:register
+```
+
+### 4. Environment variables (Vercel)
 
 | Variable | Description |
 | --- | --- |
-| `DISCORD_CLIENT_ID` | Discord application client ID |
-| `DISCORD_CLIENT_SECRET` | Discord application client secret |
-| `SESSION_SECRET` | Random string for signing cookies (`openssl rand -hex 32`) |
-| `DISCORD_REDIRECT_URI` | Optional — defaults to `https://your-domain/api/auth/callback` |
+| `DISCORD_CLIENT_ID` | Application ID |
+| `DISCORD_CLIENT_SECRET` | For website OAuth login |
+| `DISCORD_BOT_TOKEN` | Bot token |
+| `DISCORD_PUBLIC_KEY` | Public key (interactions verification) |
+| `SESSION_SECRET` | Random string (`openssl rand -hex 32`) |
+| `DATABASE_URL` | PostgreSQL connection string |
 
-Copy `.env.example` to `.env` for local development.
+Optional: `DISCORD_GUILD_ID` for instant guild command registration during dev.
 
-## Local Development
+## How commands avoid errors
 
-**Frontend only** (no Discord login):
+Every slash command is **deferred immediately** (Discord shows “Bot is thinking…”). The handler then runs DB/API work and **edits the response** with standings or match results. This uses Discord’s full processing window and avoids “This interaction failed.”
+
+A cron job hits `/api/warm` every 5 minutes to reduce cold starts.
+
+## Local development
 
 ```bash
 npm install
-npm run dev
-```
-
-**Full stack** (Discord login works):
-
-```bash
-npm install
-cp .env.example .env   # fill in your Discord credentials
-npm run dev:full       # runs vercel dev on http://localhost:3000
+cp .env.example .env
+npm run dev:full       # website + API + Discord interactions on :3000
 ```
 
 ## Scripts
 
 | Command | Description |
 | --- | --- |
-| `npm run dev` | Vite dev server (frontend only) |
-| `npm run dev:full` | Vercel dev server (frontend + API routes) |
+| `npm run dev` | Vite frontend only |
+| `npm run dev:full` | Full stack via Vercel dev |
 | `npm run build` | Production build |
-| `npm run preview` | Preview production build |
+| `npm run discord:register` | Register slash commands with Discord |
+| `npm run db:push` | Push Prisma schema to database |
 
 ## Stack
 
 - React 19 + TypeScript + Vite 6
-- Vercel serverless functions for Discord OAuth
+- Vercel serverless (OAuth, Discord interactions, cron warmup)
+- Prisma + PostgreSQL
 - Signed cookie sessions
 
-## Discord Bot
+## Legacy standalone bot
 
-League Master System bot for match reporting and standings across **multiple leagues**. See **[bot/README.md](bot/README.md)** for step-by-step setup.
-
-Quick start:
-
-```bash
-cd bot
-cp .env.example .env   # add bot token + client ID
-npm install
-npm run db:push
-npm run register
-npm run dev
-```
+The `bot/` folder is an optional always-on discord.js version. **Recommended:** use Vercel interactions (above). See `bot/README.md` only if you need a separate host.
