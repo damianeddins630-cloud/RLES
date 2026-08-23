@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Discord role ID for a league (e.g. Challenger, Premier)
+model League {
+  id             String   @id @default(cuid())
+  discordRoleId  String   @unique
+  name           String
+  teams          Team[]
+  players        Player[]
+  matches        Match[]
+  createdAt      DateTime @default(now())
+}
+
+/// Discord role ID representing a team
+model Team {
+  id             String   @id @default(cuid())
+  leagueId       String
+  league         League   @relation(fields: [leagueId], references: [id])
+  discordRoleId  String   @unique
+  name           String
+  conference     String?
+  logoUrl        String?
+  wins           Int      @default(0)
+  losses         Int      @default(0)
+  homeMatches    Match[]  @relation("HomeTeam")
+  awayMatches    Match[]  @relation("AwayTeam")
+  createdAt      DateTime @default(now())
+
+  @@index([leagueId])
+}
+
+/// Player linked to Discord user + league
+model Player {
+  id              String   @id @default(cuid())
+  leagueId        String
+  league          League   @relation(fields: [leagueId], references: [id])
+  discordUserId   String
+  displayName     String
+  goals           Int      @default(0)
+  assists         Int      @default(0)
+  saves           Int      @default(0)
+  shots           Int      @default(0)
+  demos           Int      @default(0)
+  score           Int      @default(0)
+  matchesPlayed   Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([leagueId, discordUserId])
+  @@index([leagueId])
+}
+
+model Match {
+  id                  String   @id @default(cuid())
+  leagueId            String
+  league              League   @relation(fields: [leagueId], references: [id])
+  homeTeamId          String
+  homeTeam            Team     @relation("HomeTeam", fields: [homeTeamId], references: [id])
+  awayTeamId          String
+  awayTeam            Team     @relation("AwayTeam", fields: [awayTeamId], references: [id])
+  homeScore           Int
+  awayScore           Int
+  stage               String?
+  replayUrls          String   @default("[]")
+  ballchasingGroupUrl String?
+  reportedByUserId    String
+  discordMessageId    String?
+  createdAt           DateTime @default(now())
+
+  @@index([leagueId])
+}

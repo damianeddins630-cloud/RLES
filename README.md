@@ -65,3 +65,18 @@ npm run dev:full       # runs vercel dev on http://localhost:3000
 - React 19 + TypeScript + Vite 6
 - Vercel serverless functions for Discord OAuth
 - Signed cookie sessions
+
+## Discord Bot
+
+Rocket League league bot for match reporting and standings. See **[bot/README.md](bot/README.md)** for step-by-step setup.
+
+Quick start:
+
+```bash
+cd bot
+cp .env.example .env   # add bot token + client ID
+npm install
+npm run db:push
+npm run register
+npm run dev
+```

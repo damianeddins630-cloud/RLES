@@ -6,3 +6,6 @@ dist
 .env.*
 !.env.example
 .vercel
+bot/node_modules
+bot/dev.db
+bot/prisma/dev.db
