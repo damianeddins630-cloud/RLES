@@ -614,33 +614,66 @@ body {
 .league-main--settings {
   align-items: flex-start;
   padding: 1.25rem 1.5rem 2rem;
+  background: transparent;
+}
+
+/* ── League settings (LMS page bg + league logo panel) ── */
+
+.league-settings {
+  position: relative;
+  width: 100%;
+  max-width: 920px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--ice-border);
+  box-shadow:
+    0 0 0 1px rgba(186, 230, 253, 0.5),
+    0 20px 48px rgba(14, 165, 233, 0.1);
+}
+
+.league-settings-panel-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.league-settings-panel-bg-img {
+  width: min(88%, 520px);
+  height: auto;
+  max-height: 85%;
+  object-fit: contain;
+  opacity: 0.42;
+  filter: drop-shadow(0 8px 32px rgba(14, 165, 233, 0.15));
+}
+
+.league-settings-panel-bg-badge {
+  font-family: var(--font-display);
+  font-size: clamp(5rem, 18vw, 9rem);
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: var(--ice-blue-deep);
+  opacity: 0.22;
+}
+
+.league-settings-panel-scrim {
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     165deg,
-    #040608 0%,
-    #0a1018 45%,
-    #060a12 100%
+    rgba(248, 250, 252, 0.88) 0%,
+    rgba(240, 249, 255, 0.82) 45%,
+    rgba(248, 250, 252, 0.9) 100%
   );
 }
 
-/* ── League settings (black ice) ── */
-
-.league-settings {
-  width: 100%;
-  max-width: 920px;
+.league-settings-content {
+  position: relative;
+  z-index: 1;
   padding: 1.5rem 1.75rem 2rem;
-  background: linear-gradient(
-    155deg,
-    #05080c 0%,
-    #0a121c 42%,
-    #071018 100%
-  );
-  border: 1px solid rgba(125, 211, 252, 0.22);
-  border-radius: 16px;
-  color: #e2e8f0;
-  box-shadow:
-    0 0 0 1px rgba(56, 189, 248, 0.06),
-    0 24px 56px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(186, 230, 253, 0.08);
+  color: var(--text);
 }
 
 .league-settings-header {
@@ -651,14 +684,13 @@ body {
   font-family: var(--font-display);
   font-size: 1.65rem;
   letter-spacing: 1px;
-  color: #f8fafc;
+  color: var(--ice-blue-text);
   margin-bottom: 0.35rem;
 }
 
 .league-settings-subtitle {
   font-size: 0.9rem;
-  color: #7dd3fc;
-  opacity: 0.75;
+  color: var(--text-muted);
 }
 
 .league-settings-grid {
@@ -681,22 +713,22 @@ body {
 .league-settings-label {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #cbd5e1;
+  color: var(--text-muted);
 }
 
 .league-settings-hint {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--text-muted);
   line-height: 1.45;
 }
 
 .league-settings-input {
   width: 100%;
   padding: 0.65rem 0.75rem;
-  border: 1px solid rgba(56, 189, 248, 0.18);
+  border: 1px solid var(--ice-border);
   border-radius: 8px;
-  background: #04070c;
-  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--text);
   font-family: var(--font-body);
   font-size: 0.875rem;
   outline: none;
@@ -704,7 +736,7 @@ body {
 }
 
 .league-settings-input:focus {
-  border-color: #38bdf8;
+  border-color: var(--ice-blue-deep);
   box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
 }
 
@@ -719,12 +751,12 @@ body {
 }
 
 .league-settings-section {
-  border: 1px solid rgba(56, 189, 248, 0.14);
+  border: 1px solid var(--ice-border);
   border-radius: 12px;
   padding: 1.15rem 1.25rem;
   margin-bottom: 1.25rem;
-  background: rgba(4, 10, 18, 0.72);
-  box-shadow: inset 0 1px 0 rgba(186, 230, 253, 0.05);
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(6px);
 }
 
 .league-settings-section-head {
@@ -734,7 +766,7 @@ body {
 .league-settings-section-title {
   font-size: 0.95rem;
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--ice-blue-text);
   margin-bottom: 0.25rem;
 }
 
@@ -776,13 +808,13 @@ body {
 
 .league-settings-logo-status {
   font-size: 0.8rem;
-  color: #cbd5e1;
+  color: var(--text);
   margin-bottom: 0.5rem;
 }
 
 .league-settings-logo-status span {
   display: block;
-  color: #64748b;
+  color: var(--text-muted);
   font-size: 0.75rem;
 }
 
@@ -800,18 +832,18 @@ body {
   flex-shrink: 0;
   width: 40px;
   height: 40px;
-  border: 1px solid rgba(56, 189, 248, 0.2);
+  border: 1px solid var(--ice-border);
   border-radius: 8px;
-  background: #060a12;
-  color: #bae6fd;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--ice-blue-text);
   font-size: 1rem;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
 }
 
 .league-settings-icon-btn:hover {
-  border-color: #38bdf8;
-  background: #0c1522;
+  border-color: var(--ice-blue-deep);
+  background: var(--ice-white-soft);
 }
 
 .league-settings-file-input {
@@ -823,9 +855,9 @@ body {
   gap: 0.85rem;
   align-items: center;
   padding: 0.85rem 1rem;
-  border: 1px solid rgba(56, 189, 248, 0.16);
+  border: 1px solid var(--ice-border);
   border-radius: 10px;
-  background: #050910;
+  background: rgba(255, 255, 255, 0.92);
 }
 
 .league-settings-listing-body {
@@ -843,7 +875,7 @@ body {
 
 .league-settings-listing-title-row strong {
   font-size: 0.95rem;
-  color: #f8fafc;
+  color: var(--text);
 }
 
 .league-settings-visibility-pill {
@@ -851,14 +883,14 @@ body {
   font-weight: 600;
   padding: 0.15rem 0.5rem;
   border-radius: 999px;
-  background: rgba(56, 189, 248, 0.12);
-  color: #7dd3fc;
-  border: 1px solid rgba(56, 189, 248, 0.25);
+  background: var(--ice-white-soft);
+  color: var(--ice-blue-dark);
+  border: 1px solid var(--ice-border);
 }
 
 .league-settings-listing-desc {
   font-size: 0.8rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   line-height: 1.45;
 }
 
@@ -889,7 +921,7 @@ body {
 
 .league-settings-saved {
   font-size: 0.85rem;
-  color: #38bdf8;
+  color: var(--ice-blue-dark);
   font-weight: 600;
 }
 
@@ -992,7 +1024,7 @@ body {
     padding: 1.25rem;
   }
 
-  .league-settings {
+  .league-settings-content {
     padding: 1.15rem;
   }
 
