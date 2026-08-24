@@ -5,9 +5,10 @@ import type { User } from "../types/user";
 interface LeagueListPageProps {
   user: User;
   onLogout: () => void;
+  onSelectLeague: (leagueId: string) => void;
 }
 
-export function LeagueListPage({ user, onLogout }: LeagueListPageProps) {
+export function LeagueListPage({ user, onLogout, onSelectLeague }: LeagueListPageProps) {
   return (
     <AppShell showNav={false}>
       <section className="content-card league-list-card" aria-labelledby="leagues-heading">
@@ -22,7 +23,11 @@ export function LeagueListPage({ user, onLogout }: LeagueListPageProps) {
         <ul className="league-list" aria-label="Available leagues">
           {LEAGUES.map((league) => (
             <li key={league.id}>
-              <button type="button" className="league-list-item">
+              <button
+                type="button"
+                className="league-list-item"
+                onClick={() => onSelectLeague(league.id)}
+              >
                 {league.logoUrl ? (
                   <img
                     src={league.logoUrl}
