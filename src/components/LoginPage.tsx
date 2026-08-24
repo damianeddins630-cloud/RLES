@@ -39,7 +39,7 @@ export function LoginPage() {
   }, []);
 
   return (
-    <AppShell activeTab="home">
+    <AppShell showNav={false}>
       <section className="content-card" aria-labelledby="login-heading">
         <p className="content-tagline">Your leagues. One platform.</p>
 

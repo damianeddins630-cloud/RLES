@@ -159,6 +159,11 @@ body {
   padding: 2rem 1.25rem;
 }
 
+.app-shell:not(:has(.app-nav)) .app-main {
+  min-height: 100dvh;
+  padding: 2rem 1.25rem;
+}
+
 /* ── Content card ── */
 
 .content-card {
