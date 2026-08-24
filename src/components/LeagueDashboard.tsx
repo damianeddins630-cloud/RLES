@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { SiteBackground } from "./SiteBackground";
+import { LeagueAdminPage } from "./league/LeagueAdminPage";
 import { LeagueSettingsPage } from "./league/LeagueSettingsPage";
 import { LeagueTabPlaceholder } from "./league/LeagueTabPlaceholder";
 import { useLeagueSettings } from "../hooks/useLeagueSettings";
 import type { League } from "../types/league";
 import type { User } from "../types/user";
 
-export type LeagueTab = "home" | "standings" | "teams" | "settings";
+export type LeagueTab = "home" | "standings" | "teams" | "settings" | "admin";
 
 interface LeagueDashboardProps {
   league: League;
@@ -20,6 +21,7 @@ const TABS: { id: LeagueTab; label: string }[] = [
   { id: "standings", label: "Standings" },
   { id: "teams", label: "Teams" },
   { id: "settings", label: "Settings" },
+  { id: "admin", label: "Admin" },
 ];
 
 export function LeagueDashboard({
@@ -87,7 +89,7 @@ export function LeagueDashboard({
       </aside>
 
       <main
-        className={`league-main${activeTab === "settings" ? " league-main--settings" : ""}`}
+        className={`league-main${activeTab === "settings" || activeTab === "admin" ? " league-main--wide" : ""}`}
         aria-live="polite"
       >
         {activeTab === "settings" ? (
@@ -98,6 +100,8 @@ export function LeagueDashboard({
             onSave={saveSettings}
             saved={saved}
           />
+        ) : activeTab === "admin" ? (
+          <LeagueAdminPage leagueId={league.id} />
         ) : activeTab === "home" ? (
           <LeagueTabPlaceholder title="Home" />
         ) : activeTab === "standings" ? (
