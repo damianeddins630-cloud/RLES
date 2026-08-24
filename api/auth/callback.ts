@@ -3,7 +3,7 @@ import {
   exchangeCodeForToken,
   fetchDiscordUser,
 } from "lms-lib/discord-oauth";
-import { getEnv, getRedirectUri } from "lms-lib/env";
+import { getEnv, getRedirectUri, getRequestHost } from "lms-lib/env";
 import { setSessionCookie } from "lms-lib/session";
 
 export default async function handler(
@@ -29,7 +29,7 @@ export default async function handler(
     const clientId = getEnv("DISCORD_CLIENT_ID");
     const clientSecret = getEnv("DISCORD_CLIENT_SECRET");
     const sessionSecret = getEnv("SESSION_SECRET");
-    const host = req.headers.host ?? "localhost:3000";
+    const host = getRequestHost(req);
     const redirectUri = getRedirectUri(host);
 
     const accessToken = await exchangeCodeForToken(

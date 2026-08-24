@@ -2,7 +2,24 @@
 
 Multi-league competitive gaming platform — manage Rocket League leagues, standings, and stats from one place.
 
-## Invite the bot to your server
+## Fix "Invalid OAuth2 redirect_uri" (website login)
+
+Discord only allows login if the callback URL is registered on **your** application.
+
+1. Open https://discord.com/developers/applications
+2. Select the app whose **Application ID** is `1541170292297310249` (must match `DISCORD_CLIENT_ID`)
+3. Go to **OAuth2** → **Redirects** → **Add Redirect**
+4. Paste **exactly** (no trailing slash):
+   ```
+   https://leaguemastersystem.vercel.app/api/auth/callback
+   ```
+5. Click **Save Changes**
+6. On the website, click **Continue with Discord** (uses `/api/auth/discord`, scope `identify` only)
+
+Debug helper: https://leaguemastersystem.vercel.app/api/auth/oauth-info
+
+If you see scopes like `email` or `guilds.join` on Discord's page, you are **not** using the LMS website login button — use the button on https://leaguemastersystem.vercel.app instead.
+
 
 1. Open the [Discord Developer Portal](https://discord.com/developers/applications) → your LMS application.
 2. Copy your **Application ID** (same as `DISCORD_CLIENT_ID`).

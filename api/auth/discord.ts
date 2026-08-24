@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { getDiscordAuthUrl } from "lms-lib/discord-oauth";
-import { getEnv, getRedirectUri } from "lms-lib/env";
+import { getEnv, getRedirectUri, getRequestHost } from "lms-lib/env";
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET") {
@@ -9,7 +9,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const clientId = getEnv("DISCORD_CLIENT_ID");
-    const host = req.headers.host ?? "localhost:3000";
+    const host = getRequestHost(req);
     const redirectUri = getRedirectUri(host);
     const url = getDiscordAuthUrl(clientId, redirectUri);
 
