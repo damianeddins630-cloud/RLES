@@ -1,4 +1,5 @@
 import { AppShell } from "./AppShell";
+import { LeagueListItem } from "./LeagueListItem";
 import { LEAGUES } from "../data/leagues";
 import type { User } from "../types/user";
 
@@ -23,26 +24,10 @@ export function LeagueListPage({ user, onLogout, onSelectLeague }: LeagueListPag
         <ul className="league-list" aria-label="Available leagues">
           {LEAGUES.map((league) => (
             <li key={league.id}>
-              <button
-                type="button"
-                className="league-list-item"
-                onClick={() => onSelectLeague(league.id)}
-              >
-                {league.logoUrl ? (
-                  <img
-                    src={league.logoUrl}
-                    alt=""
-                    className="league-list-logo"
-                    width={48}
-                    height={48}
-                  />
-                ) : (
-                  <span className="league-list-badge" aria-hidden="true">
-                    {league.shortLabel}
-                  </span>
-                )}
-                <span className="league-list-name">{league.name}</span>
-              </button>
+              <LeagueListItem
+                league={league}
+                onSelect={() => onSelectLeague(league.id)}
+              />
             </li>
           ))}
         </ul>
