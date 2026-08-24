@@ -7,7 +7,7 @@ export function useAuth() {
 
   const refresh = useCallback(async () => {
     try {
-      const res = await fetch("/api/auth/me");
+    const res = await fetch("/api/auth/me", { credentials: "include" });
       const data = await res.json();
       setUser(data.user ?? null);
     } catch {
@@ -22,7 +22,7 @@ export function useAuth() {
   }, [refresh]);
 
   const logout = useCallback(async () => {
-    await fetch("/api/auth/logout", { method: "POST" });
+    await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
     setUser(null);
   }, []);
 

@@ -41,9 +41,16 @@ export default async function handler(
     const user = await fetchDiscordUser(accessToken);
 
     setSessionCookie(res, user, sessionSecret);
-    res.redirect(302, "/");
+    res.statusCode = 302;
+    res.setHeader("Location", "/");
+    res.end();
   } catch (err) {
     console.error("Discord callback error:", err);
-    res.redirect(302, "/?error=auth_failed");
+    const message = err instanceof Error ? err.message : "auth_failed";
+    const code =
+      message.includes("token exchange") ? "token_exchange_failed" : "auth_failed";
+    res.statusCode = 302;
+    res.setHeader("Location", `/?error=${encodeURIComponent(code)}`);
+    res.end();
   }
 }

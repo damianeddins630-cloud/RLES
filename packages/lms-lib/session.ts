@@ -50,8 +50,28 @@ export function getSessionFromRequest(
   req: VercelRequest,
   secret: string
 ): SessionUser | null {
-  const cookie = req.cookies?.[SESSION_COOKIE];
+  const fromParser = req.cookies?.[SESSION_COOKIE];
+  const cookie = fromParser ?? parseCookieHeader(req.headers.cookie)[SESSION_COOKIE];
   return parseSessionToken(cookie, secret);
+}
+
+function parseCookieHeader(header: string | undefined): Record<string, string> {
+  if (!header) return {};
+  const out: Record<string, string> = {};
+  for (const part of header.split(";")) {
+    const trimmed = part.trim();
+    if (!trimmed) continue;
+    const eq = trimmed.indexOf("=");
+    if (eq === -1) continue;
+    const name = trimmed.slice(0, eq).trim();
+    const raw = trimmed.slice(eq + 1).trim();
+    try {
+      out[name] = decodeURIComponent(raw);
+    } catch {
+      out[name] = raw;
+    }
+  }
+  return out;
 }
 
 export function setSessionCookie(
@@ -60,7 +80,9 @@ export function setSessionCookie(
   secret: string
 ): void {
   const token = createSessionToken(user, secret);
-  const secure = process.env.NODE_ENV === "production";
+  const secure =
+    process.env.NODE_ENV === "production" ||
+    process.env.VERCEL === "1";
   const parts = [
     `${SESSION_COOKIE}=${token}`,
     "Path=/",
@@ -73,7 +95,9 @@ export function setSessionCookie(
 }
 
 export function clearSessionCookie(res: VercelResponse): void {
-  const secure = process.env.NODE_ENV === "production";
+  const secure =
+    process.env.NODE_ENV === "production" ||
+    process.env.VERCEL === "1";
   const parts = [
     `${SESSION_COOKIE}=`,
     "Path=/",
