@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 TOKEN="${VERCEL_ACCESS_TOKEN:-${VERCEL_TOKEN:-}}"
-PROJECT="${VERCEL_PROJECT:-leaguemastersystem}"
+VERCEL_PROJECT=league_master_system
 SCOPE_FLAG=()
 if [[ -n "${VERCEL_ORG_ID:-}" ]]; then
   SCOPE_FLAG=(--scope "$VERCEL_ORG_ID")
