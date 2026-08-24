@@ -2,6 +2,43 @@
 
 Multi-league competitive gaming platform — manage Rocket League leagues, standings, and stats from one place.
 
+## Invite the bot to your server
+
+1. Open the [Discord Developer Portal](https://discord.com/developers/applications) → your LMS application.
+2. Copy your **Application ID** (same as `DISCORD_CLIENT_ID`).
+3. Use this invite link (replace `YOUR_CLIENT_ID` if needed):
+
+   ```
+   https://discord.com/api/oauth2/authorize?client_id=YOUR_CLIENT_ID&permissions=216064&scope=bot%20applications.commands
+   ```
+
+   For LMS (`DISCORD_CLIENT_ID=1541170292297310249`):
+
+   [Invite League Master System bot](https://discord.com/api/oauth2/authorize?client_id=1541170292297310249&permissions=216064&scope=bot%20applications.commands)
+
+### Bot permissions (what LMS needs)
+
+| Permission | Why |
+| --- | --- |
+| **View Channels** | See channels where commands are used |
+| **Send Messages** | Post match report embeds after `/report` |
+| **Embed Links** | Rich match and standings embeds |
+| **Read Message History** | Reliable channel access |
+| **Mention @everyone, @here, and All Roles** | Ping team roles in match posts (`@TeamRole`) |
+
+**OAuth scopes** (included in the link above): `bot` + `applications.commands`
+
+### Who needs extra permissions?
+
+These are for **your server members**, not the bot:
+
+| Command | Member permission |
+| --- | --- |
+| `/report` | Manage Messages |
+| `/set-team` | Manage Server |
+
+Other commands (`/leagues`, `/player-standings`, `/player-stats`, `/team-standings`, `/register-player`) work for everyone by default.
+
 ## Deploy to Vercel (website + Discord bot)
 
 One Vercel project hosts both the website and Discord slash commands. The bot **sleeps when idle** and wakes on each command — it defers within 3 seconds (no interaction errors), then posts the full response.

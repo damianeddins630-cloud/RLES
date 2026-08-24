@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { AppShell } from "./AppShell";
 import { Logo } from "./Logo";
 import { DiscordButton } from "./DiscordButton";
 
@@ -21,40 +22,32 @@ export function LoginPage() {
   }, []);
 
   return (
-    <div className="login-page">
-      <div className="login-bg">
-        <div className="login-bg-grid" />
-        <div className="login-bg-glow login-bg-glow--blue" />
-        <div className="login-bg-glow login-bg-glow--silver" />
-      </div>
+    <AppShell activeTab="home">
+      <section className="content-card" aria-labelledby="login-heading">
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: "0.5rem" }}>
+          <Logo size={120} />
+        </div>
+        <p className="content-tagline">Your leagues. One platform.</p>
 
-      <main className="login-container">
-        <header className="login-header">
-          <Logo size={260} className="login-logo" />
-          <p className="login-tagline">Your leagues. One platform.</p>
-        </header>
+        <h1 id="login-heading" className="content-title" style={{ marginTop: "1.25rem" }}>
+          Sign In
+        </h1>
+        <p className="content-subtitle">
+          Connect with Discord to manage multiple competitive leagues
+        </p>
 
-        <section className="login-card" aria-labelledby="login-heading">
-          <h1 id="login-heading" className="login-title">Sign In</h1>
-          <p className="login-subtitle">
-            Connect with Discord to manage multiple competitive leagues
-          </p>
-
-          {error && (
-            <div className="login-error" role="alert">
-              {error}
-            </div>
-          )}
-
-          <div className="login-actions">
-            <DiscordButton />
+        {error && (
+          <div className="content-error" role="alert">
+            {error}
           </div>
+        )}
 
-          <p className="login-footer">
-            By signing in, you agree to connect your Discord profile with League Master System.
-          </p>
-        </section>
-      </main>
-    </div>
+        <DiscordButton />
+
+        <p className="content-footer">
+          By signing in, you agree to connect your Discord profile with League Master System.
+        </p>
+      </section>
+    </AppShell>
   );
 }
