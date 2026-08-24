@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Logo } from "./Logo";
+import { LeagueSettingsPage } from "./league/LeagueSettingsPage";
+import { LeagueTabPlaceholder } from "./league/LeagueTabPlaceholder";
+import { useLeagueSettings } from "../hooks/useLeagueSettings";
 import type { League } from "../types/league";
 import type { User } from "../types/user";
 
-export type LeagueTab = "home" | "standings" | "teams";
+export type LeagueTab = "home" | "standings" | "teams" | "settings";
 
 interface LeagueDashboardProps {
   league: League;
@@ -16,6 +19,7 @@ const TABS: { id: LeagueTab; label: string }[] = [
   { id: "home", label: "Home" },
   { id: "standings", label: "Standings" },
   { id: "teams", label: "Teams" },
+  { id: "settings", label: "Settings" },
 ];
 
 export function LeagueDashboard({
@@ -25,6 +29,13 @@ export function LeagueDashboard({
   onLogout,
 }: LeagueDashboardProps) {
   const [activeTab, setActiveTab] = useState<LeagueTab>("home");
+  const { settings, updateSettings, saveSettings, saved } = useLeagueSettings(
+    league.id,
+    league.name
+  );
+
+  const displayLogo = settings.logoUrl ?? league.logoUrl;
+  const displayName = settings.name || league.name;
 
   return (
     <div className="league-dashboard">
@@ -39,9 +50,9 @@ export function LeagueDashboard({
         </button>
 
         <div className="league-sidebar-header">
-          {league.logoUrl ? (
+          {displayLogo ? (
             <img
-              src={league.logoUrl}
+              src={displayLogo}
               alt=""
               className="league-sidebar-logo"
               width={52}
@@ -52,7 +63,7 @@ export function LeagueDashboard({
           )}
           <div>
             <p className="league-sidebar-label">League</p>
-            <p className="league-sidebar-name">{league.name}</p>
+            <p className="league-sidebar-name">{displayName}</p>
           </div>
         </div>
 
@@ -78,11 +89,25 @@ export function LeagueDashboard({
         </div>
       </aside>
 
-      <main className="league-main" aria-live="polite">
-        <div className="league-main-panel">
-          <h1 className="league-main-title">{TABS.find((t) => t.id === activeTab)?.label}</h1>
-          <p className="league-main-placeholder">Content coming soon.</p>
-        </div>
+      <main
+        className={`league-main${activeTab === "settings" ? " league-main--settings" : ""}`}
+        aria-live="polite"
+      >
+        {activeTab === "settings" ? (
+          <LeagueSettingsPage
+            league={league}
+            settings={settings}
+            onChange={updateSettings}
+            onSave={saveSettings}
+            saved={saved}
+          />
+        ) : activeTab === "home" ? (
+          <LeagueTabPlaceholder title="Home" />
+        ) : activeTab === "standings" ? (
+          <LeagueTabPlaceholder title="Standings" />
+        ) : (
+          <LeagueTabPlaceholder title="Teams" />
+        )}
       </main>
     </div>
   );
