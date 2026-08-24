@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { getAvatarUrl } from "../_lib/discord";
-import { getEnv } from "../_lib/env";
 import { getSessionFromRequest } from "../_lib/session";
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
@@ -9,7 +8,12 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const sessionSecret = getEnv("SESSION_SECRET");
+    const sessionSecret =
+      process.env.SESSION_SECRET ??
+      process.env.VERCEL_SESSION_SECRET;
+    if (!sessionSecret) {
+      return res.status(200).json({ user: null });
+    }
     const user = getSessionFromRequest(req, sessionSecret);
 
     if (!user) {
