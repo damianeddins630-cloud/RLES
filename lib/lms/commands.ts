@@ -13,8 +13,8 @@ import {
   getInteractionUser,
 } from "../discord/types.js";
 import { getOrCreateLeague, getOrCreateTeam, prisma } from "./db.js";
-import { buildLeaderboardEmbed, buildMatchReportPayload } from "../embeds.js";
-import { isStatCategory, STAT_CATEGORIES } from "../stats.js";
+import { buildLeaderboardEmbed, buildMatchReportPayload } from "./embeds.js";
+import { isStatCategory, STAT_CATEGORIES } from "./stats.js";
 
 function parseReplayUrls(raw: string): string[] {
   return raw
@@ -24,7 +24,6 @@ function parseReplayUrls(raw: string): string[] {
 }
 
 async function resolveRoleName(
-  guildId: string,
   roleId: string,
   roleNames: Map<string, string>
 ): Promise<string> {
@@ -71,9 +70,9 @@ export async function handleReport(ctx: InteractionContext): Promise<void> {
     awayRoleId,
   ]);
 
-  const leagueName = await resolveRoleName(guildId, leagueRoleId, roleNames);
-  const homeName = await resolveRoleName(guildId, homeRoleId, roleNames);
-  const awayName = await resolveRoleName(guildId, awayRoleId, roleNames);
+  const leagueName = await resolveRoleName(leagueRoleId, roleNames);
+  const homeName = await resolveRoleName(homeRoleId, roleNames);
+  const awayName = await resolveRoleName(awayRoleId, roleNames);
 
   const league = await getOrCreateLeague(guildId, leagueRoleId, leagueName);
   const homeTeam = await getOrCreateTeam(league.id, homeRoleId, homeName);
@@ -201,7 +200,7 @@ export async function handlePlayerStandings(ctx: InteractionContext): Promise<vo
   }
 
   const roleNames = await fetchGuildRoleNames(guildId, [leagueRoleId]);
-  const leagueName = await resolveRoleName(guildId, leagueRoleId, roleNames);
+  const leagueName = await resolveRoleName(leagueRoleId, roleNames);
   const league = await getOrCreateLeague(guildId, leagueRoleId, leagueName);
 
   const players = await prisma.player.findMany({
@@ -242,7 +241,7 @@ export async function handlePlayerStats(ctx: InteractionContext): Promise<void> 
   }
 
   const roleNames = await fetchGuildRoleNames(guildId, [leagueRoleId]);
-  const leagueName = await resolveRoleName(guildId, leagueRoleId, roleNames);
+  const leagueName = await resolveRoleName(leagueRoleId, roleNames);
   const league = await getOrCreateLeague(guildId, leagueRoleId, leagueName);
   const { label, field } = STAT_CATEGORIES[categoryRaw];
 
@@ -256,7 +255,7 @@ export async function handlePlayerStats(ctx: InteractionContext): Promise<void> 
     const rank = i + 1;
     const medal =
       rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : `${rank}.`;
-    return `${medal} **${p.displayName}** — ${p[field]}`;
+    return `${medal} **${p.displayName}** — ${p[field as keyof typeof p]}`;
   });
 
   await editDeferredInteraction(applicationId, token, {
@@ -276,7 +275,7 @@ export async function handleTeamStandings(ctx: InteractionContext): Promise<void
   }
 
   const roleNames = await fetchGuildRoleNames(guildId, [leagueRoleId]);
-  const leagueName = await resolveRoleName(guildId, leagueRoleId, roleNames);
+  const leagueName = await resolveRoleName(leagueRoleId, roleNames);
   const league = await getOrCreateLeague(guildId, leagueRoleId, leagueName);
 
   const teams = await prisma.team.findMany({
@@ -341,8 +340,8 @@ export async function handleSetTeam(ctx: InteractionContext): Promise<void> {
   }
 
   const roleNames = await fetchGuildRoleNames(guildId, [leagueRoleId, teamRoleId]);
-  const leagueName = await resolveRoleName(guildId, leagueRoleId, roleNames);
-  const teamName = await resolveRoleName(guildId, teamRoleId, roleNames);
+  const leagueName = await resolveRoleName(leagueRoleId, roleNames);
+  const teamName = await resolveRoleName(teamRoleId, roleNames);
 
   const league = await getOrCreateLeague(guildId, leagueRoleId, leagueName);
   const team = await getOrCreateTeam(league.id, teamRoleId, teamName);
@@ -372,7 +371,7 @@ export async function handleRegisterPlayer(ctx: InteractionContext): Promise<voi
   }
 
   const roleNames = await fetchGuildRoleNames(guildId, [leagueRoleId]);
-  const leagueName = await resolveRoleName(guildId, leagueRoleId, roleNames);
+  const leagueName = await resolveRoleName(leagueRoleId, roleNames);
   const league = await getOrCreateLeague(guildId, leagueRoleId, leagueName);
 
   const resolvedUser = ctx.interaction.resolved?.users?.[playerUserId];

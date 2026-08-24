@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { getAvatarUrl } from "../../lib/discord-oauth";
-import { getSessionFromRequest } from "../../lib/session";
+import { getAvatarUrl } from "../../lib/discord-oauth.js";
+import { getSessionFromRequest } from "../../lib/session.js";
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET") {

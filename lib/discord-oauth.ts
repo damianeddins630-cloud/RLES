@@ -1,4 +1,4 @@
-import type { SessionUser } from "./session";
+import type { SessionUser } from "./session.js";
 
 const DISCORD_API = "https://discord.com/api";
 

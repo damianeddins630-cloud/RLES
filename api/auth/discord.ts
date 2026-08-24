@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { getDiscordAuthUrl } from "../../lib/discord-oauth";
-import { getEnv, getRedirectUri } from "../../lib/env";
+import { getDiscordAuthUrl } from "../../lib/discord-oauth.js";
+import { getEnv, getRedirectUri } from "../../lib/env.js";
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET") {
