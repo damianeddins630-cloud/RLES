@@ -1,9 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
-import { DEFAULT_TIER_CONFIGS, DEFAULT_TIERS } from "../data/defaultTiers";
+import {
+  DEFAULT_TIER_CONFIGS,
+  DEFAULT_TIER_SALARY,
+  DEFAULT_TIERS,
+} from "../data/defaultTiers";
 import type {
   LeagueAdminData,
   LeagueMember,
   LeagueTeam,
+  LeagueTier,
   TierSalaryConfig,
 } from "../types/leagueAdmin";
 
@@ -11,6 +16,51 @@ const STORAGE_PREFIX = "lms-league-admin:";
 
 function createId(): string {
   return crypto.randomUUID();
+}
+
+function slugFromName(name: string): string {
+  const slug = name
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return slug || "tier";
+}
+
+function uniqueTierId(name: string, existingIds: string[]): string {
+  const base = slugFromName(name);
+  if (!existingIds.includes(base)) return base;
+  return `${base}-${createId().slice(0, 6)}`;
+}
+
+function mergeTierConfigs(
+  tiers: LeagueTier[],
+  tierConfigs: TierSalaryConfig[]
+): TierSalaryConfig[] {
+  return tiers.map((tier) => {
+    const existing = tierConfigs.find((c) => c.tierId === tier.id);
+    if (existing) return existing;
+    return {
+      tierId: tier.id,
+      ...DEFAULT_TIER_SALARY,
+    };
+  });
+}
+
+function normalizeAdminData(parsed: Partial<LeagueAdminData>): LeagueAdminData {
+  const tiers = (parsed.tiers ?? DEFAULT_TIERS).map((t) => ({
+    ...t,
+    logoUrl: t.logoUrl ?? null,
+  }));
+  const tierConfigs = mergeTierConfigs(tiers, parsed.tierConfigs ?? DEFAULT_TIER_CONFIGS);
+
+  return {
+    tiers,
+    tierConfigs,
+    teams: parsed.teams ?? [],
+    members: parsed.members ?? [],
+    players: parsed.players ?? [],
+  };
 }
 
 function defaultAdminData(): LeagueAdminData {
@@ -28,15 +78,7 @@ export function readLeagueAdmin(leagueId: string): LeagueAdminData {
     const raw = localStorage.getItem(`${STORAGE_PREFIX}${leagueId}`);
     if (!raw) return defaultAdminData();
     const parsed = JSON.parse(raw) as Partial<LeagueAdminData>;
-    return {
-      ...defaultAdminData(),
-      ...parsed,
-      tiers: parsed.tiers ?? DEFAULT_TIERS,
-      tierConfigs: parsed.tierConfigs ?? DEFAULT_TIER_CONFIGS,
-      teams: parsed.teams ?? [],
-      members: parsed.members ?? [],
-      players: parsed.players ?? [],
-    };
+    return normalizeAdminData(parsed);
   } catch {
     return defaultAdminData();
   }
@@ -88,6 +130,71 @@ export function useLeagueAdmin(leagueId: string) {
         tierConfigs: data.tierConfigs.map((c) =>
           c.tierId === tierId ? { ...c, ...patch } : c
         ),
+      });
+    },
+    [data, persist]
+  );
+
+  const addTier = useCallback(
+    (name: string) => {
+      const trimmed = name.trim();
+      if (!trimmed) return;
+
+      const id = uniqueTierId(trimmed, data.tiers.map((t) => t.id));
+      const order =
+        data.tiers.length === 0
+          ? 0
+          : Math.max(...data.tiers.map((t) => t.order)) + 1;
+
+      const tier: LeagueTier = {
+        id,
+        name: trimmed,
+        order,
+        logoUrl: null,
+      };
+
+      persist({
+        ...data,
+        tiers: [...data.tiers, tier],
+        tierConfigs: [
+          ...data.tierConfigs,
+          { tierId: id, ...DEFAULT_TIER_SALARY },
+        ],
+      });
+    },
+    [data, persist]
+  );
+
+  const removeTier = useCallback(
+    (tierId: string) => {
+      if (data.tiers.length <= 1) return;
+
+      const fallback = data.tiers.find((t) => t.id !== tierId);
+      if (!fallback) return;
+
+      persist({
+        ...data,
+        tiers: data.tiers.filter((t) => t.id !== tierId),
+        tierConfigs: data.tierConfigs.filter((c) => c.tierId !== tierId),
+        teams: data.teams.map((t) =>
+          t.tierId === tierId ? { ...t, tierId: fallback.id } : t
+        ),
+        members: data.members.map((m) =>
+          m.tierId === tierId ? { ...m, tierId: fallback.id } : m
+        ),
+        players: data.players.map((p) =>
+          p.tierId === tierId ? { ...p, tierId: fallback.id } : p
+        ),
+      });
+    },
+    [data, persist]
+  );
+
+  const updateTier = useCallback(
+    (tierId: string, patch: Partial<LeagueTier>) => {
+      persist({
+        ...data,
+        tiers: data.tiers.map((t) => (t.id === tierId ? { ...t, ...patch } : t)),
       });
     },
     [data, persist]
@@ -239,6 +346,9 @@ export function useLeagueAdmin(leagueId: string) {
     saved,
     save,
     updateTierConfig,
+    addTier,
+    removeTier,
+    updateTier,
     addTeam,
     removeTeam,
     updateTeam,

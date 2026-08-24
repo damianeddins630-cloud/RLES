@@ -5,6 +5,7 @@ import { AdminMembersSection } from "./admin/AdminMembersSection";
 import { AdminPlayersSection } from "./admin/AdminPlayersSection";
 import { AdminTeamsSection } from "./admin/AdminTeamsSection";
 import { AdminTierCapsSection } from "./admin/AdminTierCapsSection";
+import { AdminTierManageSection } from "./admin/AdminTierManageSection";
 
 const SECTIONS: { id: AdminSection; label: string }[] = [
   { id: "tiers", label: "Tiers & caps" },
@@ -57,11 +58,19 @@ export function LeagueAdminPage({ leagueId }: LeagueAdminPageProps) {
 
       <div className="league-admin-body">
         {section === "tiers" && (
-          <AdminTierCapsSection
-            tiers={data.tiers}
-            tierConfigs={data.tierConfigs}
-            onUpdate={admin.updateTierConfig}
-          />
+          <>
+            <AdminTierManageSection
+              tiers={data.tiers}
+              onAdd={admin.addTier}
+              onRemove={admin.removeTier}
+              onUpdate={admin.updateTier}
+            />
+            <AdminTierCapsSection
+              tiers={data.tiers}
+              tierConfigs={data.tierConfigs}
+              onUpdate={admin.updateTierConfig}
+            />
+          </>
         )}
         {section === "teams" && (
           <AdminTeamsSection

@@ -29,7 +29,22 @@ export function AdminTierCapsSection({
 
           return (
             <div key={tier.id} className="league-admin-tier-card glass-panel">
-              <h3 className="league-admin-tier-name">{tier.name}</h3>
+              <div className="league-admin-tier-card-head">
+                {tier.logoUrl ? (
+                  <img
+                    src={tier.logoUrl}
+                    alt=""
+                    className="league-admin-tier-logo league-admin-tier-logo--sm"
+                    width={40}
+                    height={40}
+                  />
+                ) : (
+                  <span className="league-admin-tier-logo-badge league-admin-tier-logo-badge--sm">
+                    {tier.name.slice(0, 2).toUpperCase()}
+                  </span>
+                )}
+                <h3 className="league-admin-tier-name">{tier.name}</h3>
+              </div>
 
               <div className="league-admin-tier-fields">
                 <label className="league-settings-field">

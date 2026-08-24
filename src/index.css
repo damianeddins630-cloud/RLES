@@ -979,6 +979,102 @@ body {
   margin: 1.25rem 0 0.75rem;
 }
 
+.league-admin-tier-manage-list {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.league-admin-tier-manage-row {
+  padding: 1rem 1.15rem;
+}
+
+.league-admin-tier-manage-main {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.league-admin-tier-manage-fields {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.league-admin-tier-manage-actions {
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--glass-border-soft);
+}
+
+.league-admin-tier-logo {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--glass-border);
+}
+
+.league-admin-tier-logo--sm {
+  width: 40px;
+  height: 40px;
+}
+
+.league-admin-tier-logo-badge {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--ice-blue-mid) 0%, var(--ice-blue-deep) 100%);
+  color: var(--ice-blue-text);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.league-admin-tier-logo-badge--sm {
+  width: 40px;
+  height: 40px;
+  font-size: 0.75rem;
+}
+
+.league-admin-tier-logo-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.league-admin-tier-logo-row .league-settings-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.league-admin-tier-clear-logo {
+  margin-top: 0.35rem;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.league-admin-tier-clear-logo:hover {
+  color: #b91c1c;
+}
+
 .league-admin-tier-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -989,12 +1085,19 @@ body {
   padding: 1rem 1.15rem;
 }
 
+.league-admin-tier-card-head {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.75rem;
+}
+
 .league-admin-tier-name {
   font-family: var(--font-display);
   font-size: 1.15rem;
   letter-spacing: 1px;
   color: var(--ice-blue-text);
-  margin-bottom: 0.75rem;
+  margin: 0;
 }
 
 .league-admin-tier-fields {
@@ -1339,8 +1442,13 @@ body {
     padding-right: 1.15rem;
   }
 
-  .league-admin-member-fields {
+  .league-admin-member-fields,
+  .league-admin-tier-manage-fields {
     grid-template-columns: 1fr;
+  }
+
+  .league-admin-tier-manage-main {
+    flex-direction: column;
   }
 
   .league-admin-add-row {

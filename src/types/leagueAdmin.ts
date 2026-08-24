@@ -3,6 +3,7 @@ export interface LeagueTier {
   id: string;
   name: string;
   order: number;
+  logoUrl?: string | null;
 }
 
 /** Salary band and team salary cap for one tier. */

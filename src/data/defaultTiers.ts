@@ -1,11 +1,17 @@
 import type { LeagueTier, TierSalaryConfig } from "../types/leagueAdmin";
 
 export const DEFAULT_TIERS: LeagueTier[] = [
-  { id: "premier", name: "Premier", order: 0 },
-  { id: "master", name: "Master", order: 1 },
-  { id: "challenger", name: "Challenger", order: 2 },
-  { id: "open", name: "Open", order: 3 },
+  { id: "premier", name: "Premier", order: 0, logoUrl: null },
+  { id: "master", name: "Master", order: 1, logoUrl: null },
+  { id: "challenger", name: "Challenger", order: 2, logoUrl: null },
+  { id: "open", name: "Open", order: 3, logoUrl: null },
 ];
+
+export const DEFAULT_TIER_SALARY = {
+  salaryMin: 1,
+  salaryMax: 10,
+  teamCap: 30,
+};
 
 export const DEFAULT_TIER_CONFIGS: TierSalaryConfig[] = [
   { tierId: "premier", salaryMin: 8, salaryMax: 12, teamCap: 48 },
