@@ -2,9 +2,9 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import {
   exchangeCodeForToken,
   fetchDiscordUser,
-} from "../_lib/discord-oauth";
-import { getEnv, getRedirectUri } from "../_lib/env";
-import { setSessionCookie } from "../_lib/session";
+} from "../../lib/discord-oauth";
+import { getEnv, getRedirectUri } from "../../lib/env";
+import { setSessionCookie } from "../../lib/session";
 
 export default async function handler(
   req: VercelRequest,

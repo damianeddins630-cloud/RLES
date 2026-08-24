@@ -1,11 +1,11 @@
 import { verifyKey } from "discord-interactions";
 
-export function verifyDiscordRequest(
+export async function verifyDiscordRequest(
   rawBody: Buffer,
   signature: string | undefined,
   timestamp: string | undefined,
   publicKey: string
-): boolean {
+): Promise<boolean> {
   if (!signature || !timestamp) return false;
   return verifyKey(rawBody, signature, timestamp, publicKey);
 }

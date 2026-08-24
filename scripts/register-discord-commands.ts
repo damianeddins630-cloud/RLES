@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { commandDefinitions } from "../api/_lib/discord/commandDefinitions.js";
+import { commandDefinitions } from "../lib/discord/commandDefinitions.js";
 
 const DISCORD_API = "https://discord.com/api/v10";
 

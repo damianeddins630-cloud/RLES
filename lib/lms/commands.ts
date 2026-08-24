@@ -12,7 +12,7 @@ import {
   getOptionUserId,
   getInteractionUser,
 } from "../discord/types.js";
-import { getOrCreateLeague, getOrCreateTeam, prisma } from "../db.js";
+import { getOrCreateLeague, getOrCreateTeam, prisma } from "./db.js";
 import { buildLeaderboardEmbed, buildMatchReportPayload } from "../embeds.js";
 import { isStatCategory, STAT_CATEGORIES } from "../stats.js";
 

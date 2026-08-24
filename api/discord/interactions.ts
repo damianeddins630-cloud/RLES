@@ -1,13 +1,13 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { waitUntil } from "@vercel/functions";
-import { verifyDiscordRequest } from "../_lib/discord/verify.js";
-import { processInteraction } from "../_lib/lms/commands.js";
+import { verifyDiscordRequest } from "../../lib/discord/verify.js";
+import { processInteraction } from "../../lib/lms/commands.js";
 import {
   InteractionType,
   ResponseType,
   readRawBody,
   type DiscordInteraction,
-} from "../_lib/discord/types.js";
+} from "../../lib/discord/types.js";
 
 export const config = {
   api: {
@@ -31,7 +31,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const rawBody = await readRawBody(req);
 
-  if (!verifyDiscordRequest(rawBody, signature, timestamp, publicKey)) {
+  if (!(await verifyDiscordRequest(rawBody, signature, timestamp, publicKey))) {
     return res.status(401).end("Invalid request signature");
   }
 

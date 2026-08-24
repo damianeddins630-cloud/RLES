@@ -98,7 +98,7 @@ export function getOptionUserId(
 }
 
 export async function readRawBody(req: VercelRequest): Promise<Buffer> {
-  const chunks: Buffer[] = [];
+  const chunks: Uint8Array[] = [];
   const stream = req as unknown as AsyncIterable<Buffer | string>;
   for await (const chunk of stream) {
     chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
