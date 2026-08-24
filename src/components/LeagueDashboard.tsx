@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Logo } from "./Logo";
+import { SiteBackground } from "./SiteBackground";
 import { LeagueSettingsPage } from "./league/LeagueSettingsPage";
 import { LeagueTabPlaceholder } from "./league/LeagueTabPlaceholder";
 import { useLeagueSettings } from "../hooks/useLeagueSettings";
@@ -39,12 +39,9 @@ export function LeagueDashboard({
 
   return (
     <div className="league-dashboard">
-      <div className="app-bg" aria-hidden="true">
-        <Logo variant="fill" className="app-bg-logo" />
-        <div className="app-bg-scrim" />
-      </div>
+      <SiteBackground />
 
-      <aside className="league-sidebar" aria-label="League navigation">
+      <aside className="league-sidebar glass-panel" aria-label="League navigation">
         <button type="button" className="league-sidebar-back" onClick={onBack}>
           ← All Leagues
         </button>

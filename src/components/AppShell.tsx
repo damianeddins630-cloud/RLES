@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Logo } from "./Logo";
+import { SiteBackground } from "./SiteBackground";
 
 export type AppTab = "home" | "leagues" | "standings" | "settings";
 
@@ -23,10 +24,7 @@ export function AppShell({
 }: AppShellProps) {
   return (
     <div className="app-shell">
-      <div className="app-bg" aria-hidden="true">
-        <Logo variant="fill" className="app-bg-logo" />
-        <div className="app-bg-scrim" />
-      </div>
+      <SiteBackground />
 
       {showNav && (
         <header className="app-nav">

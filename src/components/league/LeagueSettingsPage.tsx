@@ -60,20 +60,7 @@ export function LeagueSettingsPage({
   }
 
   return (
-    <div className="league-settings">
-      <div className="league-settings-panel-bg" aria-hidden="true">
-        {previewLogo ? (
-          <img
-            src={previewLogo}
-            alt=""
-            className="league-settings-panel-bg-img"
-          />
-        ) : (
-          <span className="league-settings-panel-bg-badge">{league.shortLabel}</span>
-        )}
-        <div className="league-settings-panel-scrim" />
-      </div>
-
+    <div className="league-settings glass-panel">
       <div className="league-settings-content">
       <header className="league-settings-header">
         <h1 className="league-settings-title">League settings</h1>

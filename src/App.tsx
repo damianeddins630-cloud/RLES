@@ -3,6 +3,7 @@ import { useAuth } from "./hooks/useAuth";
 import { LeagueDashboard } from "./components/LeagueDashboard";
 import { LeagueListPage } from "./components/LeagueListPage";
 import { LoginPage } from "./components/LoginPage";
+import { SiteBackground } from "./components/SiteBackground";
 import { LEAGUES } from "./data/leagues";
 import type { League } from "./types/league";
 
@@ -12,8 +13,11 @@ export default function App() {
 
   if (loading) {
     return (
-      <div className="loading-page">
-        <div className="loading-spinner" aria-label="Loading" />
+      <div className="app-shell">
+        <SiteBackground />
+        <div className="loading-page">
+          <div className="loading-spinner" aria-label="Loading" />
+        </div>
       </div>
     );
   }
