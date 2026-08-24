@@ -47,21 +47,31 @@ body {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(
-    165deg,
-    var(--ice-white) 0%,
-    var(--ice-white-soft) 45%,
-    var(--ice-white) 100%
-  );
+  background: var(--ice-white);
+  overflow: hidden;
 }
 
 .app-bg-logo {
-  opacity: 0.14;
-  filter: drop-shadow(0 8px 40px rgba(56, 189, 248, 0.15));
-  transform: scale(1.05);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 118vmin;
+  height: auto;
+  max-width: none;
+  transform: translate(-50%, -48%);
+  opacity: 1;
+  filter: none;
+}
+
+.app-bg-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    165deg,
+    rgba(248, 250, 252, 0.55) 0%,
+    rgba(240, 249, 255, 0.45) 40%,
+    rgba(248, 250, 252, 0.62) 100%
+  );
 }
 
 .app-nav {
@@ -154,14 +164,14 @@ body {
 .content-card {
   width: 100%;
   max-width: 440px;
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid var(--ice-border);
   border-radius: 16px;
   padding: 2rem;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
   box-shadow:
-    0 0 0 1px rgba(186, 230, 253, 0.5),
-    0 16px 40px rgba(14, 165, 233, 0.08);
+    0 0 0 1px rgba(186, 230, 253, 0.6),
+    0 20px 48px rgba(14, 165, 233, 0.12);
 }
 
 .content-title {
@@ -341,7 +351,8 @@ body {
   }
 
   .app-bg-logo {
-    transform: scale(0.85);
+    width: 135vmin;
+    transform: translate(-50%, -48%);
   }
 
   .content-card {

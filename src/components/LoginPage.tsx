@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { AppShell } from "./AppShell";
-import { Logo } from "./Logo";
 import { DiscordButton } from "./DiscordButton";
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -24,12 +23,9 @@ export function LoginPage() {
   return (
     <AppShell activeTab="home">
       <section className="content-card" aria-labelledby="login-heading">
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: "0.5rem" }}>
-          <Logo size={120} />
-        </div>
         <p className="content-tagline">Your leagues. One platform.</p>
 
-        <h1 id="login-heading" className="content-title" style={{ marginTop: "1.25rem" }}>
+        <h1 id="login-heading" className="content-title" style={{ marginTop: "0.75rem" }}>
           Sign In
         </h1>
         <p className="content-subtitle">

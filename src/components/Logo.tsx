@@ -2,20 +2,31 @@ import type { SVGProps } from "react";
 
 interface LogoProps extends SVGProps<SVGSVGElement> {
   size?: number;
+  /** Full-bleed background — dimensions controlled by CSS */
+  variant?: "default" | "fill";
 }
 
-export function Logo({ size = 200, className, ...props }: LogoProps) {
+export function Logo({
+  size = 200,
+  variant = "default",
+  className,
+  ...props
+}: LogoProps) {
   const height = size * 0.72;
+  const dimensionProps =
+    variant === "fill"
+      ? {}
+      : { width: size, height };
 
   return (
     <svg
-      width={size}
-      height={height}
+      {...dimensionProps}
       viewBox="0 0 320 230"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       aria-label="League Master System"
+      preserveAspectRatio="xMidYMid meet"
       {...props}
     >
       <defs>

@@ -24,7 +24,8 @@ export function AppShell({
   return (
     <div className="app-shell">
       <div className="app-bg" aria-hidden="true">
-        <Logo size={520} className="app-bg-logo" />
+        <Logo variant="fill" className="app-bg-logo" />
+        <div className="app-bg-scrim" />
       </div>
 
       {showNav && (
