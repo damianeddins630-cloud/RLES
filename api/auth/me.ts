@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
-import { getAvatarUrl } from "../_lib/discord";
+import { getAvatarUrl } from "../_lib/discord-oauth";
 import { getSessionFromRequest } from "../_lib/session";
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
