@@ -3,17 +3,21 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "main": "./dist/session.js",
   "exports": {
-    "./session": "./session.ts",
-    "./discord-oauth": "./discord-oauth.ts",
-    "./env": "./env.ts",
-    "./discord/verify": "./discord/verify.ts",
-    "./discord/types": "./discord/types.ts",
-    "./discord/api": "./discord/api.ts",
-    "./discord/commandDefinitions": "./discord/commandDefinitions.ts",
-    "./lms/commands": "./lms/commands.ts",
-    "./lms/db": "./lms/db.ts",
-    "./lms/embeds": "./lms/embeds.ts",
-    "./lms/stats": "./lms/stats.ts"
+    "./session": "./dist/session.js",
+    "./discord-oauth": "./dist/discord-oauth.js",
+    "./env": "./dist/env.js",
+    "./discord/verify": "./dist/discord/verify.js",
+    "./discord/types": "./dist/discord/types.js",
+    "./discord/api": "./dist/discord/api.js",
+    "./discord/commandDefinitions": "./dist/discord/commandDefinitions.js",
+    "./lms/commands": "./dist/lms/commands.js",
+    "./lms/db": "./dist/lms/db.js",
+    "./lms/embeds": "./dist/lms/embeds.js",
+    "./lms/stats": "./dist/lms/stats.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json"
   }
 }

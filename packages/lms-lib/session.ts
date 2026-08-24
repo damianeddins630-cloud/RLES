@@ -34,7 +34,10 @@ export function parseSessionToken(
   const expectedBuf = Buffer.from(expected);
 
   if (sigBuf.length !== expectedBuf.length) return null;
-  if (!timingSafeEqual(sigBuf, expectedBuf)) return null;
+  if (!timingSafeEqual(
+    sigBuf as unknown as Uint8Array,
+    expectedBuf as unknown as Uint8Array
+  )) return null;
 
   try {
     return JSON.parse(Buffer.from(payload, "base64url").toString()) as SessionUser;

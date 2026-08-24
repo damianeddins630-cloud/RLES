@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "vite",
     "dev:full": "vercel dev",
-    "build": "tsc -b && vite build",
+    "build": "npm run build:lib && tsc -b && vite build",
+    "build:lib": "tsc -p packages/lms-lib/tsconfig.json",
     "preview": "vite preview",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && npm run build:lib",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "discord:register": "tsx scripts/register-discord-commands.ts"

@@ -101,7 +101,11 @@ export async function readRawBody(req: VercelRequest): Promise<Buffer> {
   const chunks: Uint8Array[] = [];
   const stream = req as unknown as AsyncIterable<Buffer | string>;
   for await (const chunk of stream) {
-    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    chunks.push(
+      Buffer.isBuffer(chunk)
+        ? new Uint8Array(chunk.buffer, chunk.byteOffset, chunk.byteLength)
+        : new TextEncoder().encode(chunk)
+    );
   }
-  return Buffer.concat(chunks as Uint8Array[]);
+  return Buffer.from(Uint8Array.from(chunks.flatMap((c) => [...c])));
 }
