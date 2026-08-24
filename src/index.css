@@ -355,6 +355,78 @@ body {
   background: #fef2f2;
 }
 
+/* ── League list (post-login) ── */
+
+.league-list-card {
+  max-width: 480px;
+}
+
+.league-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin: 0;
+  padding: 0;
+}
+
+.league-list-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--ice-border);
+  border-radius: 12px;
+  background: var(--ice-white-soft);
+  cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s,
+    transform 0.15s;
+}
+
+.league-list-item:hover {
+  border-color: var(--ice-blue-deep);
+  background: #fff;
+  box-shadow: 0 4px 16px rgba(14, 165, 233, 0.12);
+  transform: translateY(-1px);
+}
+
+.league-list-badge {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--ice-blue-mid) 0%, var(--ice-blue-deep) 100%);
+  color: var(--ice-blue-text);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.2);
+}
+
+.league-list-logo {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.league-list-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+}
+
 /* ── Loading ── */
 
 .loading-page {

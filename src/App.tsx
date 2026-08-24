@@ -1,5 +1,5 @@
 import { useAuth } from "./hooks/useAuth";
-import { HomePage } from "./components/HomePage";
+import { LeagueListPage } from "./components/LeagueListPage";
 import { LoginPage } from "./components/LoginPage";
 
 export default function App() {
@@ -14,7 +14,7 @@ export default function App() {
   }
 
   if (user) {
-    return <HomePage user={user} onLogout={logout} />;
+    return <LeagueListPage user={user} onLogout={logout} />;
   }
 
   return <LoginPage />;
