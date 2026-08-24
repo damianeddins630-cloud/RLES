@@ -1,0 +1,19 @@
+{
+  "name": "lms-lib",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./session": "./session.ts",
+    "./discord-oauth": "./discord-oauth.ts",
+    "./env": "./env.ts",
+    "./discord/verify": "./discord/verify.ts",
+    "./discord/types": "./discord/types.ts",
+    "./discord/api": "./discord/api.ts",
+    "./discord/commandDefinitions": "./discord/commandDefinitions.ts",
+    "./lms/commands": "./lms/commands.ts",
+    "./lms/db": "./lms/db.ts",
+    "./lms/embeds": "./lms/embeds.ts",
+    "./lms/stats": "./lms/stats.ts"
+  }
+}

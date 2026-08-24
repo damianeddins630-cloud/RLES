@@ -1,13 +1,13 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { waitUntil } from "@vercel/functions";
-import { verifyDiscordRequest } from "../../lib/discord/verify.js";
-import { processInteraction } from "../../lib/lms/commands.js";
+import { verifyDiscordRequest } from "lms-lib/discord/verify";
+import { processInteraction } from "lms-lib/lms/commands";
 import {
   InteractionType,
   ResponseType,
   readRawBody,
   type DiscordInteraction,
-} from "../../lib/discord/types.js";
+} from "lms-lib/discord/types";
 
 export const config = {
   api: {
