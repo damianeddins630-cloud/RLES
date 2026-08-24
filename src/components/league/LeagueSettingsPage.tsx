@@ -88,11 +88,11 @@ export function LeagueSettingsPage({
               onChange({ visibility: e.target.value as LeagueSettings["visibility"] })
             }
           >
-            <option value="private">Private</option>
-            <option value="public" disabled>Public (coming soon)</option>
+            <option value="public">Public</option>
+            <option value="private" disabled>Private (coming soon)</option>
           </select>
           <span className="league-settings-hint">
-            Private leagues are invite-only. Public discovery is coming later.
+            New leagues are public by default and appear in discovery listings.
           </span>
         </label>
 

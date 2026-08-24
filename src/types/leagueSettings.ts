@@ -13,7 +13,7 @@ export interface LeagueSettings {
 
 export const DEFAULT_LEAGUE_SETTINGS: LeagueSettings = {
   name: "Rocket League Elite Series",
-  visibility: "private",
+  visibility: "public",
   description: "",
   timezone: "unspecified",
   serverRegion: "unspecified",
