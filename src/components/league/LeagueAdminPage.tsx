@@ -33,11 +33,21 @@ export function LeagueAdminPage({ leagueId }: LeagueAdminPageProps) {
           </p>
         </div>
         <div className="league-admin-header-actions">
-          <button type="button" className="league-settings-save-btn" onClick={admin.save}>
-            Save changes
+          <button
+            type="button"
+            className="league-settings-save-btn"
+            onClick={admin.save}
+            disabled={admin.saving || admin.loading}
+          >
+            {admin.saving ? "Saving…" : "Save changes"}
           </button>
           {admin.saved && (
-            <span className="league-settings-saved" role="status">Saved.</span>
+            <span className="league-settings-saved" role="status">
+              Saved{admin.persisted ? " to database" : " locally"}.
+            </span>
+          )}
+          {admin.saveError && (
+            <span className="league-admin-warn" role="alert">{admin.saveError}</span>
           )}
         </div>
       </header>

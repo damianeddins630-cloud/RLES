@@ -8,6 +8,9 @@ interface LeagueSettingsPageProps {
   onChange: (patch: Partial<LeagueSettings>) => void;
   onSave: () => void;
   saved: boolean;
+  saving?: boolean;
+  saveError?: string | null;
+  persisted?: boolean;
 }
 
 function LeagueLogoPreview({
@@ -36,6 +39,9 @@ export function LeagueSettingsPage({
   onChange,
   onSave,
   saved,
+  saving = false,
+  saveError = null,
+  persisted = false,
 }: LeagueSettingsPageProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [logoDraftUrl, setLogoDraftUrl] = useState("");
@@ -241,11 +247,21 @@ export function LeagueSettingsPage({
       </section>
 
       <div className="league-settings-actions">
-        <button type="button" className="league-settings-save-btn" onClick={onSave}>
-          Save changes
+        <button
+          type="button"
+          className="league-settings-save-btn"
+          onClick={onSave}
+          disabled={saving}
+        >
+          {saving ? "Saving…" : "Save changes"}
         </button>
         {saved && (
-          <span className="league-settings-saved" role="status">Settings saved.</span>
+          <span className="league-settings-saved" role="status">
+            Saved{persisted ? " to database" : " locally"}.
+          </span>
+        )}
+        {saveError && (
+          <span className="league-admin-warn" role="alert">{saveError}</span>
         )}
       </div>
       </div>

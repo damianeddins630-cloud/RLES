@@ -9,7 +9,6 @@ import type {
   FranchiseRole,
   LeagueAdminData,
   LeagueMember,
-  LeagueRegistration,
   LeagueTeam,
   LeagueTier,
   TierSalaryConfig,
@@ -163,116 +162,103 @@ export function useLeagueAdmin(leagueId: string) {
     return () => window.removeEventListener(LEAGUE_ADMIN_UPDATED_EVENT, onUpdated);
   }, [leagueId]);
 
-  const persist = useCallback((next: LeagueAdminData) => {
-    setData(next);
-    setSaved(false);
-  }, []);
-
-  const save = useCallback(() => {
-    localStorage.setItem(`${STORAGE_PREFIX}${leagueId}`, JSON.stringify(data));
-    setSaved(true);
-    window.dispatchEvent(
-      new CustomEvent(LEAGUE_ADMIN_UPDATED_EVENT, { detail: { leagueId } })
-    );
-  }, [leagueId, data]);
-
-  const syncRegistrations = useCallback(
-    (registrations: LeagueRegistration[]) => {
-      const defaultTierId = data.tiers[0]?.id ?? "premier";
-      const defaultRoleId =
-        data.franchiseRoles.find((r) => r.id === "player")?.id ??
-        data.franchiseRoles[0]?.id ??
-        "player";
-
-      const byDiscord = new Map(
-        data.members
-          .filter((m) => m.discordUserId)
-          .map((m) => [m.discordUserId!, m])
-      );
-
-      const members = [...data.members];
-
-      for (const reg of registrations) {
-        const existing = byDiscord.get(reg.discordUserId);
-        if (existing) {
-          const idx = members.findIndex((m) => m.id === existing.id);
-          if (idx >= 0) {
-            members[idx] = {
-              ...members[idx],
-              displayName: reg.displayName,
-              signedUpAt: reg.signedUpAt,
-              fromRegistration: true,
-            };
-          }
-        } else {
-          members.push({
-            id: createId(),
-            displayName: reg.displayName,
-            discordUserId: reg.discordUserId,
-            tierId: defaultTierId,
-            teamId: null,
-            franchiseRoleId: defaultRoleId,
-            trackerUrl: "",
-            salary: 0,
-            signedUpAt: reg.signedUpAt,
-            fromRegistration: true,
-          });
-        }
-      }
-
-      persist({ ...data, members });
+  const persist = useCallback(
+    (next: LeagueAdminData) => {
+      setData(next);
+      setSaved(false);
+      setSaveError(null);
+      localStorage.setItem(`${STORAGE_PREFIX}${leagueId}`, JSON.stringify(next));
     },
-    [data, persist]
+    [leagueId]
   );
 
-  const refreshRegistrations = useCallback(async () => {
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [persisted, setPersisted] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const loadAdmin = useCallback(async () => {
     setSyncing(true);
     setSyncError(null);
     try {
       const res = await fetch(
-        `/api/leagues/registrations?leagueId=${encodeURIComponent(leagueId)}`,
+        `/api/leagues/admin?leagueId=${encodeURIComponent(leagueId)}`,
         { credentials: "include" }
       );
-      if (!res.ok) {
-        throw new Error("Could not load sign-ups");
+      if (!res.ok) throw new Error("Could not load admin data");
+      const body = (await res.json()) as {
+        admin: LeagueAdminData | null;
+        persisted: boolean;
+      };
+      if (body.admin) {
+        const normalized = normalizeAdminData(body.admin);
+        setData(normalized);
+        localStorage.setItem(`${STORAGE_PREFIX}${leagueId}`, JSON.stringify(normalized));
+        setPersisted(body.persisted);
+      } else {
+        const local = readLeagueAdmin(leagueId);
+        setData(local);
+        setPersisted(false);
       }
-      const body = (await res.json()) as { registrations: LeagueRegistration[] };
-      syncRegistrations(body.registrations ?? []);
+      setSaved(false);
     } catch (err) {
-      setSyncError(err instanceof Error ? err.message : "Sync failed");
+      setSyncError(err instanceof Error ? err.message : "Failed to load");
+      setData(readLeagueAdmin(leagueId));
+      setPersisted(false);
     } finally {
       setSyncing(false);
+      setLoading(false);
     }
-  }, [leagueId, syncRegistrations]);
+  }, [leagueId]);
+
+  const save = useCallback(async () => {
+    setSaving(true);
+    setSaveError(null);
+    localStorage.setItem(`${STORAGE_PREFIX}${leagueId}`, JSON.stringify(data));
+
+    try {
+      const res = await fetch(
+        `/api/leagues/admin?leagueId=${encodeURIComponent(leagueId)}`,
+        {
+          method: "PUT",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        }
+      );
+
+      if (!res.ok) {
+        const err = (await res.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(err?.error ?? "Failed to save admin data");
+      }
+
+      const body = (await res.json()) as {
+        admin: LeagueAdminData;
+        persisted: boolean;
+      };
+      const normalized = normalizeAdminData(body.admin);
+      setData(normalized);
+      localStorage.setItem(`${STORAGE_PREFIX}${leagueId}`, JSON.stringify(normalized));
+      setPersisted(body.persisted);
+      setSaved(true);
+      window.dispatchEvent(
+        new CustomEvent(LEAGUE_ADMIN_UPDATED_EVENT, { detail: { leagueId } })
+      );
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : "Failed to save");
+      setSaved(false);
+    } finally {
+      setSaving(false);
+    }
+  }, [leagueId, data]);
+
+  const refreshRegistrations = useCallback(async () => {
+    await loadAdmin();
+  }, [loadAdmin]);
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      setSyncing(true);
-      setSyncError(null);
-      try {
-        const res = await fetch(
-          `/api/leagues/registrations?leagueId=${encodeURIComponent(leagueId)}`,
-          { credentials: "include" }
-        );
-        if (!res.ok) throw new Error("Could not load sign-ups");
-        const body = (await res.json()) as { registrations: LeagueRegistration[] };
-        if (!cancelled) syncRegistrations(body.registrations ?? []);
-      } catch (err) {
-        if (!cancelled) {
-          setSyncError(err instanceof Error ? err.message : "Sync failed");
-        }
-      } finally {
-        if (!cancelled) setSyncing(false);
-      }
-    }
-
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, [leagueId, syncRegistrations]);
+    loadAdmin();
+  }, [loadAdmin]);
 
   const updateTierConfig = useCallback(
     (tierId: string, patch: Partial<TierSalaryConfig>) => {
@@ -458,10 +444,15 @@ export function useLeagueAdmin(leagueId: string) {
   return {
     data,
     saved,
+    saving,
+    saveError,
+    persisted,
+    loading,
     syncing,
     syncError,
     save,
     refreshRegistrations,
+    reloadAdmin: loadAdmin,
     updateTierConfig,
     addTier,
     removeTier,

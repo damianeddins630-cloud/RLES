@@ -15,6 +15,8 @@
     "./lms/commands": "./dist/lms/commands.js",
     "./lms/db": "./dist/lms/db.js",
     "./lms/leagueWebLookup": "./dist/lms/leagueWebLookup.js",
+    "./lms/leagueConfig": "./dist/lms/leagueConfig.js",
+    "./lms/leagueDefaults": "./dist/lms/leagueDefaults.js",
     "./lms/embeds": "./dist/lms/embeds.js",
     "./lms/stats": "./dist/lms/stats.js"
   },

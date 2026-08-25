@@ -12,10 +12,17 @@ model League {
   discordGuildId String
   discordRoleId  String   @unique
   name           String
+  logoUrl        String?
+  visibility     String   @default("public")
+  description    String   @default("")
+  timezone       String   @default("unspecified")
+  serverRegion   String   @default("unspecified")
+  webConfig      Json?
   teams          Team[]
   players        Player[]
   matches        Match[]
   createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   @@index([discordGuildId])
 }
@@ -43,6 +50,11 @@ model Player {
   league          League   @relation(fields: [leagueId], references: [id])
   discordUserId   String
   displayName     String
+  tierId          String?
+  franchiseRoleId String?
+  webTeamId       String?
+  trackerUrl      String   @default("")
+  salary          Int      @default(0)
   goals           Int      @default(0)
   assists         Int      @default(0)
   saves           Int      @default(0)

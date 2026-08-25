@@ -32,10 +32,8 @@ export function LeagueDashboard({
   onLogout,
 }: LeagueDashboardProps) {
   const [activeTab, setActiveTab] = useState<LeagueTab>("home");
-  const { settings, updateSettings, saveSettings, saved } = useLeagueSettings(
-    league.id,
-    league.name
-  );
+  const { settings, updateSettings, saveSettings, saved, saving, saveError, persisted } =
+    useLeagueSettings(league.id, league.name);
 
   const displayLogo = settings.logoUrl ?? league.logoUrl;
   const displayName = settings.name || league.name;
@@ -100,6 +98,9 @@ export function LeagueDashboard({
             onChange={updateSettings}
             onSave={saveSettings}
             saved={saved}
+            saving={saving}
+            saveError={saveError}
+            persisted={persisted}
           />
         ) : activeTab === "admin" ? (
           <LeagueAdminPage leagueId={league.id} />
