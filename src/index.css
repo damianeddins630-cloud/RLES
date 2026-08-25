@@ -1365,6 +1365,271 @@ body {
   text-decoration: underline;
 }
 
+/* ── Standings ── */
+
+.standings-page {
+  width: 100%;
+  max-width: 1100px;
+}
+
+.standings-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem 1.75rem 1rem;
+  border-bottom: 1px solid var(--glass-border-soft);
+}
+
+.standings-view-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  padding: 0.85rem 1.75rem;
+  border-bottom: 1px solid var(--glass-border-soft);
+}
+
+.standings-body {
+  padding: 1.25rem 1.75rem 2rem;
+}
+
+.standings-section-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--ice-blue-text);
+  margin: 0 0 0.75rem;
+}
+
+.standings-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.standings-block {
+  padding: 1rem 1.15rem;
+  margin-bottom: 0.75rem;
+}
+
+.standings-block-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ice-blue-text);
+  margin-bottom: 0.75rem;
+}
+
+.standings-table-hint {
+  margin-bottom: 0.75rem;
+}
+
+.standings-table-wrap {
+  overflow-x: auto;
+}
+
+.standings-table-wrap--wide {
+  max-width: 100%;
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.standings-table th,
+.standings-table td {
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+  border-bottom: 1px solid var(--glass-border-soft);
+}
+
+.standings-table thead th {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.standings-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.standings-num {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.standings-player-name {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.standings-th-btn {
+  border: none;
+  background: none;
+  font: inherit;
+  font-weight: 700;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.standings-th-btn:hover {
+  color: var(--ice-blue-dark);
+}
+
+.standings-team-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.standings-team-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+
+.standings-team-badge {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--ice-blue-mid), var(--ice-blue-deep));
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--ice-blue-text);
+}
+
+.standings-rank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75rem;
+  font-weight: 700;
+  color: var(--ice-blue-text);
+}
+
+.standings-rank-medal {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.standings-leaderboard-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.standings-overview-list {
+  padding: 0.75rem 1rem;
+}
+
+.standings-leaderboard-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--glass-border-soft);
+}
+
+.standings-leaderboard-item:last-child {
+  border-bottom: none;
+}
+
+.standings-leaderboard-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.standings-leaderboard-value {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ice-blue-text);
+}
+
+.standings-stat-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.standings-stat-btn {
+  padding: 0.4rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ice-blue-text);
+  background: rgba(255, 255, 255, 0.18);
+  cursor: pointer;
+}
+
+.standings-stat-btn--active,
+.standings-stat-btn:hover {
+  background: var(--glass-bg-strong);
+  border-color: var(--glass-border);
+}
+
+.standings-leaderboard-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.standings-mini-card {
+  padding: 0.85rem 1rem;
+}
+
+.standings-mini-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--ice-blue-text);
+  margin-bottom: 0.5rem;
+}
+
+.standings-mini-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-size: 0.8rem;
+}
+
+.standings-mini-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.standings-mini-list strong {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.standings-teams-view {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.standings-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1.5rem;
+  color: var(--text-muted);
+}
+
 /* ── Loading ── */
 
 .loading-page {
@@ -1503,5 +1768,16 @@ body {
 
   .league-admin-row-actions {
     justify-content: flex-end;
+  }
+
+  .standings-header,
+  .standings-view-nav,
+  .standings-body {
+    padding-left: 1.15rem;
+    padding-right: 1.15rem;
+  }
+
+  .standings-leaderboard-cards {
+    grid-template-columns: 1fr;
   }
 }

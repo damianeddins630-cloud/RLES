@@ -1,10 +1,7 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
+import { findLeagueForWebId, LEAGUE_WEB_LOOKUP } from "lms-lib/lms/leagueWebLookup";
 import { prisma } from "lms-lib/lms/db";
 import { getSessionFromRequest } from "lms-lib/session";
-
-const LEAGUE_LOOKUP: Record<string, { nameContains: string; roleEnv?: string }> = {
-  rles: { nameContains: "Rocket League Elite", roleEnv: "RLES_DISCORD_ROLE_ID" },
-};
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "GET") {
@@ -23,23 +20,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   const leagueId = typeof req.query.leagueId === "string" ? req.query.leagueId : "";
-  const lookup = LEAGUE_LOOKUP[leagueId];
-  if (!lookup) {
+  if (!LEAGUE_WEB_LOOKUP[leagueId]) {
     return res.status(404).json({ error: "League not found" });
   }
 
   try {
-    const roleId = lookup.roleEnv ? process.env[lookup.roleEnv] : undefined;
-
-    let league = roleId
-      ? await prisma.league.findUnique({ where: { discordRoleId: roleId } })
-      : null;
-
-    if (!league) {
-      league = await prisma.league.findFirst({
-        where: { name: { contains: lookup.nameContains, mode: "insensitive" } },
-      });
-    }
+    const league = await findLeagueForWebId(leagueId);
 
     if (!league) {
       return res.status(200).json({ registrations: [] });

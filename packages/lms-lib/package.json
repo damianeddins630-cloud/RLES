@@ -14,6 +14,7 @@
     "./discord/commandDefinitions": "./dist/discord/commandDefinitions.js",
     "./lms/commands": "./dist/lms/commands.js",
     "./lms/db": "./dist/lms/db.js",
+    "./lms/leagueWebLookup": "./dist/lms/leagueWebLookup.js",
     "./lms/embeds": "./dist/lms/embeds.js",
     "./lms/stats": "./dist/lms/stats.js"
   },

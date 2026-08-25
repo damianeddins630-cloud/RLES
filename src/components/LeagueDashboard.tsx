@@ -2,6 +2,7 @@ import { useState } from "react";
 import { SiteBackground } from "./SiteBackground";
 import { LeagueAdminPage } from "./league/LeagueAdminPage";
 import { LeagueSettingsPage } from "./league/LeagueSettingsPage";
+import { LeagueStandingsPage } from "./league/LeagueStandingsPage";
 import { LeagueTabPlaceholder } from "./league/LeagueTabPlaceholder";
 import { useLeagueSettings } from "../hooks/useLeagueSettings";
 import type { League } from "../types/league";
@@ -89,7 +90,7 @@ export function LeagueDashboard({
       </aside>
 
       <main
-        className={`league-main${activeTab === "settings" || activeTab === "admin" ? " league-main--wide" : ""}`}
+        className={`league-main${activeTab === "settings" || activeTab === "admin" || activeTab === "standings" ? " league-main--wide" : ""}`}
         aria-live="polite"
       >
         {activeTab === "settings" ? (
@@ -105,7 +106,7 @@ export function LeagueDashboard({
         ) : activeTab === "home" ? (
           <LeagueTabPlaceholder title="Home" />
         ) : activeTab === "standings" ? (
-          <LeagueTabPlaceholder title="Standings" />
+          <LeagueStandingsPage leagueId={league.id} />
         ) : (
           <LeagueTabPlaceholder title="Teams" />
         )}
