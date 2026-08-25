@@ -15,6 +15,13 @@ export interface TierSalaryConfig {
   teamCap: number;
 }
 
+/** Franchise staff / roster role (Owner, GM, Player, etc.). */
+export interface FranchiseRole {
+  id: string;
+  name: string;
+  order: number;
+}
+
 export interface LeagueTeam {
   id: string;
   name: string;
@@ -23,34 +30,37 @@ export interface LeagueTeam {
   logoUrl?: string | null;
 }
 
-/** Anyone registered in the league — staff or roster. */
+/**
+ * Signed-up league member (same as player roster entry).
+ * Populated from Discord registration + admin controls.
+ */
 export interface LeagueMember {
   id: string;
   displayName: string;
   discordUserId?: string;
   tierId: string;
   teamId?: string | null;
-  trackerUrl: string;
-  /** Individual player salary for cap calculations. */
-  salary: number;
-}
-
-/** Roster player on a team (linked member). */
-export interface LeaguePlayer {
-  id: string;
-  memberId: string;
-  teamId: string;
-  tierId: string;
+  franchiseRoleId?: string | null;
   trackerUrl: string;
   salary: number;
+  /** When they signed up / were registered */
+  signedUpAt?: string;
+  /** From Discord registration — admin fields still editable */
+  fromRegistration?: boolean;
 }
 
 export interface LeagueAdminData {
   tiers: LeagueTier[];
   tierConfigs: TierSalaryConfig[];
+  franchiseRoles: FranchiseRole[];
   teams: LeagueTeam[];
   members: LeagueMember[];
-  players: LeaguePlayer[];
 }
 
-export type AdminSection = "tiers" | "teams" | "members" | "players";
+export type AdminSection = "tiers" | "roles" | "teams" | "members";
+
+export interface LeagueRegistration {
+  discordUserId: string;
+  displayName: string;
+  signedUpAt: string;
+}

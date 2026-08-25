@@ -1,12 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
+import { DEFAULT_FRANCHISE_ROLES } from "../data/defaultFranchiseRoles";
 import {
   DEFAULT_TIER_CONFIGS,
   DEFAULT_TIER_SALARY,
   DEFAULT_TIERS,
 } from "../data/defaultTiers";
 import type {
+  FranchiseRole,
   LeagueAdminData,
   LeagueMember,
+  LeagueRegistration,
   LeagueTeam,
   LeagueTier,
   TierSalaryConfig,
@@ -33,6 +36,12 @@ function uniqueTierId(name: string, existingIds: string[]): string {
   return `${base}-${createId().slice(0, 6)}`;
 }
 
+function uniqueRoleId(name: string, existingIds: string[]): string {
+  const base = slugFromName(name);
+  if (!existingIds.includes(base)) return base;
+  return `${base}-${createId().slice(0, 6)}`;
+}
+
 function mergeTierConfigs(
   tiers: LeagueTier[],
   tierConfigs: TierSalaryConfig[]
@@ -40,44 +49,89 @@ function mergeTierConfigs(
   return tiers.map((tier) => {
     const existing = tierConfigs.find((c) => c.tierId === tier.id);
     if (existing) return existing;
-    return {
-      tierId: tier.id,
-      ...DEFAULT_TIER_SALARY,
-    };
+    return { tierId: tier.id, ...DEFAULT_TIER_SALARY };
   });
 }
 
-function normalizeAdminData(parsed: Partial<LeagueAdminData>): LeagueAdminData {
+function migrateLegacyPlayers(
+  members: LeagueMember[],
+  players?: Array<{
+    memberId: string;
+    teamId: string;
+    tierId: string;
+    trackerUrl: string;
+    salary: number;
+  }>
+): LeagueMember[] {
+  if (!players?.length) return members;
+
+  const byId = new Map(members.map((m) => [m.id, { ...m }]));
+
+  for (const player of players) {
+    const existing = byId.get(player.memberId);
+    if (existing) {
+      byId.set(player.memberId, {
+        ...existing,
+        teamId: existing.teamId ?? player.teamId,
+        tierId: player.tierId ?? existing.tierId,
+        trackerUrl: existing.trackerUrl || player.trackerUrl,
+        salary: existing.salary || player.salary,
+      });
+    }
+  }
+
+  return Array.from(byId.values());
+}
+
+function normalizeAdminData(parsed: Partial<LeagueAdminData> & { players?: unknown[] }): LeagueAdminData {
   const tiers = (parsed.tiers ?? DEFAULT_TIERS).map((t) => ({
     ...t,
     logoUrl: t.logoUrl ?? null,
   }));
   const tierConfigs = mergeTierConfigs(tiers, parsed.tierConfigs ?? DEFAULT_TIER_CONFIGS);
+  const franchiseRoles = (parsed.franchiseRoles ?? DEFAULT_FRANCHISE_ROLES).map((r) => ({
+    ...r,
+  }));
+
+  const defaultTierId = tiers[0]?.id ?? "premier";
+  const defaultRoleId = franchiseRoles[0]?.id ?? "player";
+
+  let members = migrateLegacyPlayers(
+    parsed.members ?? [],
+    parsed.players as Array<{
+      memberId: string;
+      teamId: string;
+      tierId: string;
+      trackerUrl: string;
+      salary: number;
+    }>
+  ).map((m) => ({
+    ...m,
+    franchiseRoleId: m.franchiseRoleId ?? defaultRoleId,
+    teamId: m.teamId ?? null,
+    trackerUrl: m.trackerUrl ?? "",
+    salary: m.salary ?? 0,
+    tierId: m.tierId ?? defaultTierId,
+  }));
 
   return {
     tiers,
     tierConfigs,
+    franchiseRoles,
     teams: parsed.teams ?? [],
-    members: parsed.members ?? [],
-    players: parsed.players ?? [],
+    members,
   };
 }
 
 function defaultAdminData(): LeagueAdminData {
-  return {
-    tiers: [...DEFAULT_TIERS],
-    tierConfigs: [...DEFAULT_TIER_CONFIGS],
-    teams: [],
-    members: [],
-    players: [],
-  };
+  return normalizeAdminData({});
 }
 
 export function readLeagueAdmin(leagueId: string): LeagueAdminData {
   try {
     const raw = localStorage.getItem(`${STORAGE_PREFIX}${leagueId}`);
     if (!raw) return defaultAdminData();
-    const parsed = JSON.parse(raw) as Partial<LeagueAdminData>;
+    const parsed = JSON.parse(raw) as Partial<LeagueAdminData> & { players?: unknown[] };
     return normalizeAdminData(parsed);
   } catch {
     return defaultAdminData();
@@ -89,6 +143,8 @@ export const LEAGUE_ADMIN_UPDATED_EVENT = "lms:league-admin-updated";
 export function useLeagueAdmin(leagueId: string) {
   const [data, setData] = useState<LeagueAdminData>(() => readLeagueAdmin(leagueId));
   const [saved, setSaved] = useState(false);
+  const [syncing, setSyncing] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   useEffect(() => {
     setData(readLeagueAdmin(leagueId));
@@ -107,13 +163,10 @@ export function useLeagueAdmin(leagueId: string) {
     return () => window.removeEventListener(LEAGUE_ADMIN_UPDATED_EVENT, onUpdated);
   }, [leagueId]);
 
-  const persist = useCallback(
-    (next: LeagueAdminData) => {
-      setData(next);
-      setSaved(false);
-    },
-    []
-  );
+  const persist = useCallback((next: LeagueAdminData) => {
+    setData(next);
+    setSaved(false);
+  }, []);
 
   const save = useCallback(() => {
     localStorage.setItem(`${STORAGE_PREFIX}${leagueId}`, JSON.stringify(data));
@@ -122,6 +175,104 @@ export function useLeagueAdmin(leagueId: string) {
       new CustomEvent(LEAGUE_ADMIN_UPDATED_EVENT, { detail: { leagueId } })
     );
   }, [leagueId, data]);
+
+  const syncRegistrations = useCallback(
+    (registrations: LeagueRegistration[]) => {
+      const defaultTierId = data.tiers[0]?.id ?? "premier";
+      const defaultRoleId =
+        data.franchiseRoles.find((r) => r.id === "player")?.id ??
+        data.franchiseRoles[0]?.id ??
+        "player";
+
+      const byDiscord = new Map(
+        data.members
+          .filter((m) => m.discordUserId)
+          .map((m) => [m.discordUserId!, m])
+      );
+
+      const members = [...data.members];
+
+      for (const reg of registrations) {
+        const existing = byDiscord.get(reg.discordUserId);
+        if (existing) {
+          const idx = members.findIndex((m) => m.id === existing.id);
+          if (idx >= 0) {
+            members[idx] = {
+              ...members[idx],
+              displayName: reg.displayName,
+              signedUpAt: reg.signedUpAt,
+              fromRegistration: true,
+            };
+          }
+        } else {
+          members.push({
+            id: createId(),
+            displayName: reg.displayName,
+            discordUserId: reg.discordUserId,
+            tierId: defaultTierId,
+            teamId: null,
+            franchiseRoleId: defaultRoleId,
+            trackerUrl: "",
+            salary: 0,
+            signedUpAt: reg.signedUpAt,
+            fromRegistration: true,
+          });
+        }
+      }
+
+      persist({ ...data, members });
+    },
+    [data, persist]
+  );
+
+  const refreshRegistrations = useCallback(async () => {
+    setSyncing(true);
+    setSyncError(null);
+    try {
+      const res = await fetch(
+        `/api/leagues/registrations?leagueId=${encodeURIComponent(leagueId)}`,
+        { credentials: "include" }
+      );
+      if (!res.ok) {
+        throw new Error("Could not load sign-ups");
+      }
+      const body = (await res.json()) as { registrations: LeagueRegistration[] };
+      syncRegistrations(body.registrations ?? []);
+    } catch (err) {
+      setSyncError(err instanceof Error ? err.message : "Sync failed");
+    } finally {
+      setSyncing(false);
+    }
+  }, [leagueId, syncRegistrations]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      setSyncing(true);
+      setSyncError(null);
+      try {
+        const res = await fetch(
+          `/api/leagues/registrations?leagueId=${encodeURIComponent(leagueId)}`,
+          { credentials: "include" }
+        );
+        if (!res.ok) throw new Error("Could not load sign-ups");
+        const body = (await res.json()) as { registrations: LeagueRegistration[] };
+        if (!cancelled) syncRegistrations(body.registrations ?? []);
+      } catch (err) {
+        if (!cancelled) {
+          setSyncError(err instanceof Error ? err.message : "Sync failed");
+        }
+      } finally {
+        if (!cancelled) setSyncing(false);
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [leagueId, syncRegistrations]);
 
   const updateTierConfig = useCallback(
     (tierId: string, patch: Partial<TierSalaryConfig>) => {
@@ -142,24 +293,12 @@ export function useLeagueAdmin(leagueId: string) {
 
       const id = uniqueTierId(trimmed, data.tiers.map((t) => t.id));
       const order =
-        data.tiers.length === 0
-          ? 0
-          : Math.max(...data.tiers.map((t) => t.order)) + 1;
-
-      const tier: LeagueTier = {
-        id,
-        name: trimmed,
-        order,
-        logoUrl: null,
-      };
+        data.tiers.length === 0 ? 0 : Math.max(...data.tiers.map((t) => t.order)) + 1;
 
       persist({
         ...data,
-        tiers: [...data.tiers, tier],
-        tierConfigs: [
-          ...data.tierConfigs,
-          { tierId: id, ...DEFAULT_TIER_SALARY },
-        ],
+        tiers: [...data.tiers, { id, name: trimmed, order, logoUrl: null }],
+        tierConfigs: [...data.tierConfigs, { tierId: id, ...DEFAULT_TIER_SALARY }],
       });
     },
     [data, persist]
@@ -168,7 +307,6 @@ export function useLeagueAdmin(leagueId: string) {
   const removeTier = useCallback(
     (tierId: string) => {
       if (data.tiers.length <= 1) return;
-
       const fallback = data.tiers.find((t) => t.id !== tierId);
       if (!fallback) return;
 
@@ -182,9 +320,6 @@ export function useLeagueAdmin(leagueId: string) {
         members: data.members.map((m) =>
           m.tierId === tierId ? { ...m, tierId: fallback.id } : m
         ),
-        players: data.players.map((p) =>
-          p.tierId === tierId ? { ...p, tierId: fallback.id } : p
-        ),
       });
     },
     [data, persist]
@@ -195,6 +330,54 @@ export function useLeagueAdmin(leagueId: string) {
       persist({
         ...data,
         tiers: data.tiers.map((t) => (t.id === tierId ? { ...t, ...patch } : t)),
+      });
+    },
+    [data, persist]
+  );
+
+  const addFranchiseRole = useCallback(
+    (name: string) => {
+      const trimmed = name.trim();
+      if (!trimmed) return;
+      const id = uniqueRoleId(trimmed, data.franchiseRoles.map((r) => r.id));
+      const order =
+        data.franchiseRoles.length === 0
+          ? 0
+          : Math.max(...data.franchiseRoles.map((r) => r.order)) + 1;
+      persist({
+        ...data,
+        franchiseRoles: [...data.franchiseRoles, { id, name: trimmed, order }],
+      });
+    },
+    [data, persist]
+  );
+
+  const removeFranchiseRole = useCallback(
+    (roleId: string) => {
+      if (data.franchiseRoles.length <= 1) return;
+      const fallback = data.franchiseRoles.find((r) => r.id !== roleId);
+      if (!fallback) return;
+
+      persist({
+        ...data,
+        franchiseRoles: data.franchiseRoles.filter((r) => r.id !== roleId),
+        members: data.members.map((m) =>
+          m.franchiseRoleId === roleId
+            ? { ...m, franchiseRoleId: fallback.id }
+            : m
+        ),
+      });
+    },
+    [data, persist]
+  );
+
+  const updateFranchiseRole = useCallback(
+    (roleId: string, patch: Partial<FranchiseRole>) => {
+      persist({
+        ...data,
+        franchiseRoles: data.franchiseRoles.map((r) =>
+          r.id === roleId ? { ...r, ...patch } : r
+        ),
       });
     },
     [data, persist]
@@ -222,7 +405,6 @@ export function useLeagueAdmin(leagueId: string) {
         members: data.members.map((m) =>
           m.teamId === teamId ? { ...m, teamId: null } : m
         ),
-        players: data.players.filter((p) => p.teamId !== teamId),
       });
     },
     [data, persist]
@@ -238,27 +420,11 @@ export function useLeagueAdmin(leagueId: string) {
     [data, persist]
   );
 
-  const addMember = useCallback(
-    (displayName: string, tierId: string) => {
-      const member: LeagueMember = {
-        id: createId(),
-        displayName: displayName.trim(),
-        tierId,
-        teamId: null,
-        trackerUrl: "",
-        salary: 0,
-      };
-      persist({ ...data, members: [...data.members, member] });
-    },
-    [data, persist]
-  );
-
   const removeMember = useCallback(
     (memberId: string) => {
       persist({
         ...data,
         members: data.members.filter((m) => m.id !== memberId),
-        players: data.players.filter((p) => p.memberId !== memberId),
       });
     },
     [data, persist]
@@ -266,62 +432,10 @@ export function useLeagueAdmin(leagueId: string) {
 
   const updateMember = useCallback(
     (memberId: string, patch: Partial<LeagueMember>) => {
-      const members = data.members.map((m) =>
-        m.id === memberId ? { ...m, ...patch } : m
-      );
-      const updated = members.find((m) => m.id === memberId);
-      let players = data.players;
-      if (updated) {
-        players = data.players.map((p) =>
-          p.memberId === memberId
-            ? {
-                ...p,
-                tierId: updated.tierId,
-                trackerUrl: updated.trackerUrl,
-                salary: updated.salary,
-                teamId: updated.teamId ?? p.teamId,
-              }
-            : p
-        );
-        if (!updated.teamId) {
-          players = players.filter((p) => p.memberId !== memberId);
-        } else if (!data.players.some((p) => p.memberId === memberId)) {
-          players = [
-            ...players,
-            {
-              id: createId(),
-              memberId,
-              teamId: updated.teamId!,
-              tierId: updated.tierId,
-              trackerUrl: updated.trackerUrl,
-              salary: updated.salary,
-            },
-          ];
-        }
-      }
-      persist({ ...data, members, players });
-    },
-    [data, persist]
-  );
-
-  const addPlayer = useCallback(
-    (memberId: string, teamId: string) => {
-      const member = data.members.find((m) => m.id === memberId);
-      if (!member) return;
-      updateMember(memberId, { teamId });
-    },
-    [data.members, updateMember]
-  );
-
-  const removePlayer = useCallback(
-    (playerId: string) => {
-      const player = data.players.find((p) => p.id === playerId);
-      if (!player) return;
       persist({
         ...data,
-        players: data.players.filter((p) => p.id !== playerId),
         members: data.members.map((m) =>
-          m.id === player.memberId ? { ...m, teamId: null } : m
+          m.id === memberId ? { ...m, ...patch } : m
         ),
       });
     },
@@ -330,10 +444,10 @@ export function useLeagueAdmin(leagueId: string) {
 
   const getTeamSalaryTotal = useCallback(
     (teamId: string) =>
-      data.players
-        .filter((p) => p.teamId === teamId)
-        .reduce((sum, p) => sum + p.salary, 0),
-    [data.players]
+      data.members
+        .filter((m) => m.teamId === teamId)
+        .reduce((sum, m) => sum + m.salary, 0),
+    [data.members]
   );
 
   const getTierConfig = useCallback(
@@ -344,19 +458,22 @@ export function useLeagueAdmin(leagueId: string) {
   return {
     data,
     saved,
+    syncing,
+    syncError,
     save,
+    refreshRegistrations,
     updateTierConfig,
     addTier,
     removeTier,
     updateTier,
+    addFranchiseRole,
+    removeFranchiseRole,
+    updateFranchiseRole,
     addTeam,
     removeTeam,
     updateTeam,
-    addMember,
     removeMember,
     updateMember,
-    addPlayer,
-    removePlayer,
     getTeamSalaryTotal,
     getTierConfig,
   };

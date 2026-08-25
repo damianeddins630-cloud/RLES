@@ -1260,6 +1260,46 @@ body {
   gap: 0.75rem;
 }
 
+.league-admin-member-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.league-admin-member-name {
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.league-admin-members-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.league-admin-member-summary {
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--glass-border-soft);
+}
+
+.league-admin-code {
+  margin-left: 0.25rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.35);
+  font-size: 0.8rem;
+}
+
+.league-admin-role-field {
+  flex: 1;
+  min-width: 200px;
+}
+
 .league-admin-member-footer {
   display: flex;
   align-items: center;

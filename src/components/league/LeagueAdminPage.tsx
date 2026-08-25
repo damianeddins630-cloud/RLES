@@ -1,17 +1,17 @@
 import { useState } from "react";
 import type { AdminSection } from "../../types/leagueAdmin";
 import { useLeagueAdmin } from "../../hooks/useLeagueAdmin";
+import { AdminFranchiseRolesSection } from "./admin/AdminFranchiseRolesSection";
 import { AdminMembersSection } from "./admin/AdminMembersSection";
-import { AdminPlayersSection } from "./admin/AdminPlayersSection";
 import { AdminTeamsSection } from "./admin/AdminTeamsSection";
 import { AdminTierCapsSection } from "./admin/AdminTierCapsSection";
 import { AdminTierManageSection } from "./admin/AdminTierManageSection";
 
 const SECTIONS: { id: AdminSection; label: string }[] = [
   { id: "tiers", label: "Tiers & caps" },
+  { id: "roles", label: "Franchise roles" },
   { id: "teams", label: "Teams" },
   { id: "members", label: "Members" },
-  { id: "players", label: "Players" },
 ];
 
 interface LeagueAdminPageProps {
@@ -19,7 +19,7 @@ interface LeagueAdminPageProps {
 }
 
 export function LeagueAdminPage({ leagueId }: LeagueAdminPageProps) {
-  const [section, setSection] = useState<AdminSection>("tiers");
+  const [section, setSection] = useState<AdminSection>("members");
   const admin = useLeagueAdmin(leagueId);
   const { data } = admin;
 
@@ -29,7 +29,7 @@ export function LeagueAdminPage({ leagueId }: LeagueAdminPageProps) {
         <div>
           <h1 className="league-settings-title">League admin</h1>
           <p className="league-settings-subtitle">
-            Manage tiers, teams, members, rosters, tracker links, and salary caps.
+            Franchise roles, tiers, teams, and signed-up members — salary, tracker, and assignments.
           </p>
         </div>
         <div className="league-admin-header-actions">
@@ -72,6 +72,14 @@ export function LeagueAdminPage({ leagueId }: LeagueAdminPageProps) {
             />
           </>
         )}
+        {section === "roles" && (
+          <AdminFranchiseRolesSection
+            roles={data.franchiseRoles}
+            onAdd={admin.addFranchiseRole}
+            onRemove={admin.removeFranchiseRole}
+            onUpdate={admin.updateFranchiseRole}
+          />
+        )}
         {section === "teams" && (
           <AdminTeamsSection
             tiers={data.tiers}
@@ -87,24 +95,14 @@ export function LeagueAdminPage({ leagueId }: LeagueAdminPageProps) {
           <AdminMembersSection
             tiers={data.tiers}
             teams={data.teams}
+            franchiseRoles={data.franchiseRoles}
             members={data.members}
             tierConfigs={data.tierConfigs}
-            onAdd={admin.addMember}
+            syncing={admin.syncing}
+            syncError={admin.syncError}
+            onRefresh={admin.refreshRegistrations}
             onRemove={admin.removeMember}
             onUpdate={admin.updateMember}
-          />
-        )}
-        {section === "players" && (
-          <AdminPlayersSection
-            tiers={data.tiers}
-            teams={data.teams}
-            members={data.members}
-            players={data.players}
-            tierConfigs={data.tierConfigs}
-            getTeamSalaryTotal={admin.getTeamSalaryTotal}
-            getTierConfig={admin.getTierConfig}
-            onAddPlayer={admin.addPlayer}
-            onRemovePlayer={admin.removePlayer}
           />
         )}
       </div>
